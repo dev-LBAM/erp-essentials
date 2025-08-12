@@ -16,6 +16,6 @@ public static class ProductErrors
     public static readonly Error InvalidStockQuantity = new DomainError("Product.InvalidStockQuantity", "Stock quantity must be positive.", ErrorType.Validation);
     public static readonly Error InsufficientStock = new DomainError("Product.InsufficientStock", "There is not enough stock to fulfill the request.", ErrorType.Conflict);
     public static readonly Error LotNotFound = new DomainError("Product.LotNotFound", "The specified lot was not found for this product.", ErrorType.NotFound);
-    public static readonly Error InvalidLotQuantity = new DomainError("Product.NonPositiveQuantity", "Lot quantity must be a positive value.", ErrorType.Validation);
-    public static readonly Error InsufficientStockInLot = new DomainError("Product.InsufficientStock", "There is not enough stock in this specific lot.", ErrorType.Conflict);
+    public static readonly Error InvalidLotQuantity = new DomainError("Product.InvalidLotQuantity", "Lot quantity must be a positive value.", ErrorType.Validation);
+    public static readonly Error InsufficientStockInLot = new DomainError("Product.InsufficientStockInLot", "There is not enough stock in this specific lot.", ErrorType.Conflict);
 }

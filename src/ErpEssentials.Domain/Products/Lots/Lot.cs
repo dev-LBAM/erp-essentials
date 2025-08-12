@@ -14,22 +14,22 @@ public class Lot
 
     private Lot() { }
 
-    public static Result<Lot> Create(Guid productId, int quantity, decimal purchasePrice, DateTime? expirationDate)
+    public static Result<Lot> Create(Guid productId, CreateLotData lotData)
     {
         if (productId == Guid.Empty)
         {
             return Result<Lot>.Failure(LotErrors.MissingProductId);
         }
-        if (quantity <= 0) return Result<Lot>.Failure(LotErrors.NonPositiveQuantity);
-        if (purchasePrice < 0) return Result<Lot>.Failure(LotErrors.NonNegativePurchasePrice);
+        if (lotData.Quantity <= 0) return Result<Lot>.Failure(LotErrors.NonPositiveQuantity);
+        if (lotData.PurchasePrice < 0) return Result<Lot>.Failure(LotErrors.NonNegativePurchasePrice);
 
         Lot lot = new()
         {
             Id = Guid.NewGuid(),
             ProductId = productId,
-            Quantity = quantity,
-            PurchasePrice = purchasePrice,
-            ExpirationDate = expirationDate,
+            Quantity = lotData.Quantity,
+            PurchasePrice = lotData.PurchasePrice,
+            ExpirationDate = lotData.ExpirationDate,
             CreatedAt = DateTime.UtcNow
         };
 

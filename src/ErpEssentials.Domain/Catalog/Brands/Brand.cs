@@ -12,14 +12,14 @@ public class Brand
 
     public static Result<Brand> Create(string name)
     {
-        var standardizedName = name.ToTitleCaseStandard();
+        string standardizedName = name.ToTitleCaseStandard();
 
         if (string.IsNullOrWhiteSpace(standardizedName))
         {
-            return Result<Brand>.Failure(BrandErrors.EmptyBrandName);
+            return Result<Brand>.Failure(BrandErrors.EmptyName);
         }
 
-        var brand = new Brand
+        Brand brand = new()
         {
             Id = Guid.NewGuid(),
             Name = standardizedName
@@ -30,11 +30,11 @@ public class Brand
 
     public Result UpdateName(string newName)
     {
-        var standardizedName = newName.ToTitleCaseStandard();
+        string standardizedName = newName.ToTitleCaseStandard();
 
         if (string.IsNullOrWhiteSpace(standardizedName))
         {
-            return Result.Failure(BrandErrors.EmptyBrandName);
+            return Result.Failure(BrandErrors.EmptyName);
         }
 
         Name = standardizedName;

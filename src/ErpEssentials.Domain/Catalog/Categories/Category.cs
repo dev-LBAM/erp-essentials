@@ -12,14 +12,14 @@ public class Category
 
     public static Result<Category> Create(string name)
     {
-        var standardizedName = name.ToTitleCaseStandard();
+        string standardizedName = name.ToTitleCaseStandard();
 
         if (string.IsNullOrWhiteSpace(standardizedName))
         {
-            return Result<Category>.Failure(CategoryErrors.EmptyCategoryName);
+            return Result<Category>.Failure(CategoryErrors.EmptyName);
         }
 
-        var Category = new Category
+        Category Category = new()
         {
             Id = Guid.NewGuid(),
             Name = standardizedName
@@ -30,11 +30,11 @@ public class Category
 
     public Result UpdateName(string newName)
     {
-        var standardizedName = newName.ToTitleCaseStandard();
+        string standardizedName = newName.ToTitleCaseStandard();
 
         if (string.IsNullOrWhiteSpace(standardizedName))
         {
-            return Result.Failure(CategoryErrors.EmptyCategoryName);
+            return Result.Failure(CategoryErrors.EmptyName);
         }
 
         Name = standardizedName;

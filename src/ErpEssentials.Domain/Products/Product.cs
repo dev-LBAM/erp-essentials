@@ -25,17 +25,17 @@ public class Product
 
     private Product() { }
 
-    public static Result<Product> Create(string sku, string name, string description, string? barcode, decimal price, decimal cost, Guid brandId, Guid categoryId)
+    public static Result<Product> Create(CreateProductData productData)
     {
         List<Error> errors = new();
-        string standardizedName = name.ToTitleCaseStandard();
+        string standardizedName = productData.Name.ToTitleCaseStandard();
 
-        if (string.IsNullOrWhiteSpace(sku)) errors.Add(ProductErrors.EmptySku);
+        if (string.IsNullOrWhiteSpace(productData.Sku)) errors.Add(ProductErrors.EmptySku);
         if (string.IsNullOrWhiteSpace(standardizedName)) errors.Add(ProductErrors.EmptyName);
-        if (price <= 0) errors.Add(ProductErrors.NonPositivePrice);
-        if (cost < 0) errors.Add(ProductErrors.NonNegativeCost);
-        if (brandId == Guid.Empty) errors.Add(ProductErrors.EmptyBrandId);
-        if (categoryId == Guid.Empty) errors.Add(ProductErrors.EmptyCategoryId);
+        if (productData.Price <= 0) errors.Add(ProductErrors.NonPositivePrice);
+        if (productData.Cost < 0) errors.Add(ProductErrors.NonNegativeCost);
+        if (productData.BrandId == Guid.Empty) errors.Add(ProductErrors.EmptyBrandId);
+        if (productData.CategoryId == Guid.Empty) errors.Add(ProductErrors.EmptyCategoryId);
 
         if (errors.Any())
         {
@@ -46,14 +46,14 @@ public class Product
         Product product = new()
         {
             Id = Guid.NewGuid(),
-            Sku = sku.Trim(),
-            Barcode = barcode ?? string.Empty,
+            Sku = productData.Sku.Trim(),
+            Barcode = productData.Barcode ?? string.Empty,
             Name = standardizedName,
-            Description = description,
-            Price = price,
-            Cost = cost,
-            BrandId = brandId,
-            CategoryId = categoryId,
+            Description = productData.Description ?? string.Empty,
+            Price = productData.Price,
+            Cost = productData.Cost,
+            BrandId = productData.BrandId,
+            CategoryId = productData.CategoryId,
             IsActive = true,
             CreatedAt = DateTime.UtcNow
         };
@@ -63,9 +63,9 @@ public class Product
 
     public int GetTotalStock() => _lots.Sum(l => l.Quantity);
 
-    public Result ReceiveStock(int quantity, decimal purchasePrice, DateTime? expirationDate)
+    public Result ReceiveStock(CreateLotData lotData)
     {
-        Result<Lot> lotResult = Lot.Create(Id, quantity, purchasePrice, expirationDate);
+        Result<Lot> lotResult = Lot.Create(Id, lotData);
         if (lotResult.IsFailure)
         {
             return Result.Failure(lotResult.Error);
