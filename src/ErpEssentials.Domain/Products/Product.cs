@@ -6,7 +6,7 @@ namespace ErpEssentials.Domain.Products;
 
 public class Product
 {
-    private readonly List<Lot> _lots = new();
+    private readonly List<Lot> _lots = [];
 
     public Guid Id { get; private set; }
     public string Sku { get; private set; } = string.Empty;
@@ -27,7 +27,7 @@ public class Product
 
     public static Result<Product> Create(CreateProductData productData)
     {
-        List<Error> errors = new();
+        List<Error> errors = [];
         string standardizedName = productData.Name.ToTitleCaseStandard();
 
         if (string.IsNullOrWhiteSpace(productData.Sku)) errors.Add(ProductErrors.EmptySku);
@@ -37,7 +37,7 @@ public class Product
         if (productData.BrandId == Guid.Empty) errors.Add(ProductErrors.EmptyBrandId);
         if (productData.CategoryId == Guid.Empty) errors.Add(ProductErrors.EmptyCategoryId);
 
-        if (errors.Any())
+        if (errors.Count != 0)
         {
             Dictionary<string, string[]> errorsDictionary = errors.ToDictionary(e => e.Code.Split('.').Last(), e => new[] { e.Message });
             return Result<Product>.Failure(new ValidationError(errorsDictionary));
@@ -81,7 +81,7 @@ public class Product
         if (GetTotalStock() < quantityToRemove) return Result.Failure(ProductErrors.InsufficientStock);
 
         int quantityLeft = quantityToRemove;
-        List<Lot> lotsToRemove = new();
+        List<Lot> lotsToRemove = [];
 
         foreach (Lot lot in _lots.OrderBy(l => l.ExpirationDate ?? l.CreatedAt))
         {
