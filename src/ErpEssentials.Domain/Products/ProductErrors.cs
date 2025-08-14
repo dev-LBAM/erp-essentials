@@ -18,4 +18,7 @@ public static class ProductErrors
     public static readonly Error LotNotFound = new DomainError("Product.LotNotFound", "The specified lot was not found for this product.", ErrorType.NotFound);
     public static readonly Error InvalidLotQuantity = new DomainError("Product.InvalidLotQuantity", "Lot quantity must be a positive value.", ErrorType.Validation);
     public static readonly Error InsufficientStockInLot = new DomainError("Product.InsufficientStockInLot", "There is not enough stock in this specific lot.", ErrorType.Conflict);
+
+    //Others
+    public static readonly Error SkuConflict = new DomainError("Product.SkuConflict", "A product with this SKU already exists.", ErrorType.Conflict);
 }

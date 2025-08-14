@@ -2,8 +2,8 @@
 
 public interface IProductRepository
 {
-    Task AddAsync(Product product);
+    Task AddAsync(Product product, CancellationToken cancellationToken);
     Task<Product?> GetByIdAsync(Guid id);
-    Task<Product?> GetBySkuAsync(string sku);
+    Task<Product?> GetBySkuAsync(string sku, CancellationToken cancellationToken);
     Task UpdateAsync(Product product);
 }
