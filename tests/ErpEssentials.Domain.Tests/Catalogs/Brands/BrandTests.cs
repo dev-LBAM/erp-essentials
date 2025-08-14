@@ -1,9 +1,7 @@
-﻿using Xunit;
-using ErpEssentials.Domain.Catalog.Brands;
+﻿using ErpEssentials.Domain.Catalogs.Brands;
 using ErpEssentials.SharedKernel.ResultPattern;
-using System;
 
-namespace ErpEssentials.Domain.Tests.Catalog.Brands;
+namespace ErpEssentials.Domain.Tests.Catalogs.Brands;
 
 public class BrandTests
 {

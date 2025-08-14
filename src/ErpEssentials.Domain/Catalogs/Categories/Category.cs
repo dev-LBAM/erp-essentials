@@ -1,31 +1,31 @@
 ﻿using ErpEssentials.SharedKernel.Extensions;
 using ErpEssentials.SharedKernel.ResultPattern;
 
-namespace ErpEssentials.Domain.Catalog.Brands;
+namespace ErpEssentials.Domain.Catalogs.Categories;
 
-public class Brand
+public class Category
 {
     public Guid Id { get; private set; }
     public string Name { get; private set; } = string.Empty;
 
-    private Brand() { }
+    private Category() { }
 
-    public static Result<Brand> Create(string name)
+    public static Result<Category> Create(string name)
     {
         string standardizedName = name.ToTitleCaseStandard();
 
         if (string.IsNullOrWhiteSpace(standardizedName))
         {
-            return Result<Brand>.Failure(BrandErrors.EmptyName);
+            return Result<Category>.Failure(CategoryErrors.EmptyName);
         }
 
-        Brand brand = new()
+        Category Category = new()
         {
             Id = Guid.NewGuid(),
             Name = standardizedName
         };
 
-        return Result<Brand>.Success(brand);
+        return Result<Category>.Success(Category);
     }
 
     public Result UpdateName(string newName)
@@ -34,7 +34,7 @@ public class Brand
 
         if (string.IsNullOrWhiteSpace(standardizedName))
         {
-            return Result.Failure(BrandErrors.EmptyName);
+            return Result.Failure(CategoryErrors.EmptyName);
         }
 
         Name = standardizedName;

@@ -1,6 +1,6 @@
 ﻿using ErpEssentials.SharedKernel.ResultPattern;
 
-namespace ErpEssentials.Domain.Catalog.Brands;
+namespace ErpEssentials.Domain.Catalogs.Brands;
 
 public static class BrandErrors
 {

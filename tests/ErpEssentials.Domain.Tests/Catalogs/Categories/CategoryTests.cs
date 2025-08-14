@@ -1,9 +1,7 @@
-﻿using Xunit;
-using ErpEssentials.Domain.Catalog.Categories;
+﻿using ErpEssentials.Domain.Catalogs.Categories;
 using ErpEssentials.SharedKernel.ResultPattern;
-using System;
 
-namespace ErpEssentials.Domain.Tests.Catalog.Categories;
+namespace ErpEssentials.Domain.Tests.Catalogs.Categories;
 
 public class CategoryTests
 {

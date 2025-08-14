@@ -1,6 +1,6 @@
 ﻿using ErpEssentials.SharedKernel.ResultPattern;
 
-namespace ErpEssentials.Domain.Catalog.Categories;
+namespace ErpEssentials.Domain.Catalogs.Categories;
 
 public static class CategoryErrors
 {

@@ -1,4 +1,4 @@
-﻿namespace ErpEssentials.Domain.Catalog.Brands;
+﻿namespace ErpEssentials.Domain.Catalogs.Brands;
 
 public interface IBrandRepository
 {
