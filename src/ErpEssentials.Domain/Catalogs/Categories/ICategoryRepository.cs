@@ -1,4 +1,4 @@
-﻿namespace ErpEssentials.Domain.Catalog.Categories;
+﻿namespace ErpEssentials.Domain.Catalogs.Categories;
 
 public interface ICategoryRepository
 {
