@@ -1,7 +1,20 @@
+using ErpEssentials.Domain.Catalogs.Brands;
+using ErpEssentials.Domain.Catalogs.Categories;
+using ErpEssentials.Domain.Products;
+using ErpEssentials.Infrastructure.Persistence;
+using ErpEssentials.Infrastructure.Persistence.Repositories;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<IBrandRepository, BrandRepository>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
