@@ -1,6 +1,7 @@
 ﻿using ErpEssentials.Application.Features.Products.Create;
 using ErpEssentials.Domain.Products;
 using ErpEssentials.SharedKernel.ResultPattern;
+using ErpEssentials.SharedKernel.Abstractions;
 using Moq;
 
 namespace ErpEssentials.Application.Tests.Features.Products.Create;
@@ -8,12 +9,15 @@ namespace ErpEssentials.Application.Tests.Features.Products.Create;
 public class CreateProductHandlerTests
 {
     private readonly Mock<IProductRepository> _mockProductRepository;
+    private readonly Mock<IUnitOfWork> _mockUnitOfWork;
     private readonly CreateProductHandler _handler;
 
     public CreateProductHandlerTests()
     {
         _mockProductRepository = new Mock<IProductRepository>();
-        _handler = new CreateProductHandler(_mockProductRepository.Object);
+        _mockUnitOfWork = new Mock<IUnitOfWork>();
+        _handler = new CreateProductHandler(_mockProductRepository.Object,
+            _mockUnitOfWork.Object);
     }
 
     private static CreateProductCommand CreateValidCommand(string sku = "UNIQUE-SKU")
@@ -54,6 +58,10 @@ public class CreateProductHandlerTests
         _mockProductRepository.Verify(repo =>
             repo.AddAsync(It.IsAny<Product>(), It.IsAny<CancellationToken>()),
             Times.Never);
+
+        _mockUnitOfWork.Verify(uow =>
+            uow.SaveChangesAsync(It.IsAny<CancellationToken>()),
+            Times.Never);
     }
 
     [Fact]
@@ -74,6 +82,10 @@ public class CreateProductHandlerTests
         Assert.NotNull(result.Value);
         _mockProductRepository.Verify(repo =>
             repo.AddAsync(It.IsAny<Product>(), It.IsAny<CancellationToken>()),
+            Times.Once);
+
+        _mockUnitOfWork.Verify(uow =>
+            uow.SaveChangesAsync(It.IsAny<CancellationToken>()),
             Times.Once);
     }
 }
