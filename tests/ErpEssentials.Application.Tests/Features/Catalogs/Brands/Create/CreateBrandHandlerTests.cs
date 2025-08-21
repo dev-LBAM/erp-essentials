@@ -1,20 +1,24 @@
-﻿using Moq;
-using ErpEssentials.Application.Features.Catalogs.Brands.Create;
+﻿using ErpEssentials.Application.Features.Catalogs.Brands.Create;
 using ErpEssentials.Domain.Catalogs.Brands;
-using ErpEssentials.SharedKernel.ResultPattern;
+using ErpEssentials.SharedKernel.Abstractions;
 using ErpEssentials.SharedKernel.Extensions;
+using ErpEssentials.SharedKernel.ResultPattern;
+using Moq;
 
 namespace ErpEssentials.Application.Tests.Features.Catalogs.Brands.Create;
 
 public class CreateBrandHandlerTests
 {
     private readonly Mock<IBrandRepository> _mockBrandRepository;
+    private readonly Mock<IUnitOfWork> _mockUnitOfWork;
     private readonly CreateBrandHandler _handler;
 
     public CreateBrandHandlerTests()
     {
         _mockBrandRepository = new Mock<IBrandRepository>();
-        _handler = new CreateBrandHandler(_mockBrandRepository.Object);
+        _mockUnitOfWork = new Mock<IUnitOfWork>();
+        _handler = new CreateBrandHandler(_mockBrandRepository.Object,
+            _mockUnitOfWork.Object);
     }
 
     [Fact]
@@ -36,7 +40,11 @@ public class CreateBrandHandlerTests
         Assert.Equal(BrandErrors.NameInUse.Code, result.Error.Code);
         _mockBrandRepository.Verify(repo =>
             repo.AddAsync(It.IsAny<Brand>(), It.IsAny<CancellationToken>()),
-            Times.Never);
+            Times.Never); 
+
+        _mockUnitOfWork.Verify(uow =>
+            uow.SaveChangesAsync(It.IsAny<CancellationToken>()),
+            Times.Once);
     }
 
     [Fact]
@@ -59,6 +67,10 @@ public class CreateBrandHandlerTests
         Assert.Equal("Puma", result.Value.Name);
         _mockBrandRepository.Verify(repo =>
             repo.AddAsync(It.IsAny<Brand>(), It.IsAny<CancellationToken>()),
+            Times.Once);
+
+        _mockUnitOfWork.Verify(uow =>
+            uow.SaveChangesAsync(It.IsAny<CancellationToken>()),
             Times.Once);
     }
 }

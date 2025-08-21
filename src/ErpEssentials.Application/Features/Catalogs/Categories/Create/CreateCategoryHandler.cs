@@ -1,13 +1,15 @@
 ﻿using ErpEssentials.Domain.Catalogs.Categories;
+using ErpEssentials.SharedKernel.Abstractions;
 using ErpEssentials.SharedKernel.Extensions;
 using ErpEssentials.SharedKernel.ResultPattern;
 using MediatR;
 
 namespace ErpEssentials.Application.Features.Catalogs.Categories.Create;
 
-public class CreateCategoryHandler(ICategoryRepository categoryRepository) : IRequestHandler<CreateCategoryCommand, Result<Category>>
+public class CreateCategoryHandler(ICategoryRepository categoryRepository, IUnitOfWork unitOfWork) : IRequestHandler<CreateCategoryCommand, Result<Category>>
 {
     private readonly ICategoryRepository _categoryRepository = categoryRepository;
+    private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
 
     public async Task<Result<Category>> Handle(CreateCategoryCommand request, CancellationToken cancellationToken)
@@ -28,6 +30,7 @@ public class CreateCategoryHandler(ICategoryRepository categoryRepository) : IRe
 
         Category newCategory = categoryResult.Value;
         await _categoryRepository.AddAsync(newCategory, cancellationToken);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result<Category>.Success(newCategory);
     }

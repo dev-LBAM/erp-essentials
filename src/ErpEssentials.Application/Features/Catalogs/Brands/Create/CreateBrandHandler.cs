@@ -1,14 +1,17 @@
 ﻿using ErpEssentials.Domain.Catalogs.Brands;
 using ErpEssentials.Domain.Catalogs.Categories;
+using ErpEssentials.SharedKernel.Abstractions;
 using ErpEssentials.SharedKernel.Extensions;
 using ErpEssentials.SharedKernel.ResultPattern;
 using MediatR;
 
 namespace ErpEssentials.Application.Features.Catalogs.Brands.Create;
 
-public class CreateBrandHandler(IBrandRepository brandRepository) : IRequestHandler<CreateBrandCommand, Result<Brand>>
+public class CreateBrandHandler(IBrandRepository brandRepository, IUnitOfWork unitOfWork) : IRequestHandler<CreateBrandCommand, Result<Brand>>
 {
     private readonly IBrandRepository _brandRepository = brandRepository;
+    private readonly IUnitOfWork _unitOfWork = unitOfWork;
+
 
 
     public async Task<Result<Brand>> Handle(CreateBrandCommand request, CancellationToken cancellationToken)
@@ -29,6 +32,7 @@ public class CreateBrandHandler(IBrandRepository brandRepository) : IRequestHand
 
         Brand newBrand = brandResult.Value;
         await _brandRepository.AddAsync(newBrand, cancellationToken);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result<Brand>.Success(newBrand);
     }

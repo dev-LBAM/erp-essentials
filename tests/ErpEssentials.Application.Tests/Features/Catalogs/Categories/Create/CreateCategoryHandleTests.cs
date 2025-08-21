@@ -1,20 +1,24 @@
-﻿using Moq;
-using ErpEssentials.Application.Features.Catalogs.Categories.Create;
+﻿using ErpEssentials.Application.Features.Catalogs.Categories.Create;
 using ErpEssentials.Domain.Catalogs.Categories;
-using ErpEssentials.SharedKernel.ResultPattern;
+using ErpEssentials.SharedKernel.Abstractions;
 using ErpEssentials.SharedKernel.Extensions;
+using ErpEssentials.SharedKernel.ResultPattern;
+using Moq;
 
 namespace ErpEssentials.Application.Tests.Features.Catalogs.Categories.Create;
 
 public class CreateCategoryHandlerTests
 {
     private readonly Mock<ICategoryRepository> _mockCategoryRepository;
+    private readonly Mock<IUnitOfWork> _mockUnitOfWork;
     private readonly CreateCategoryHandler _handler;
 
     public CreateCategoryHandlerTests()
     {
         _mockCategoryRepository = new Mock<ICategoryRepository>();
-        _handler = new CreateCategoryHandler(_mockCategoryRepository.Object);
+        _mockUnitOfWork = new Mock<IUnitOfWork>();
+        _handler = new CreateCategoryHandler(_mockCategoryRepository.Object,
+            _mockUnitOfWork.Object);
     }
 
     [Fact]
@@ -37,6 +41,10 @@ public class CreateCategoryHandlerTests
         _mockCategoryRepository.Verify(repo =>
             repo.AddAsync(It.IsAny<Category>(), It.IsAny<CancellationToken>()),
             Times.Never);
+
+        _mockUnitOfWork.Verify(uow =>
+            uow.SaveChangesAsync(It.IsAny<CancellationToken>()),
+            Times.Once);
     }
 
     [Fact]
@@ -59,6 +67,10 @@ public class CreateCategoryHandlerTests
         Assert.Equal("Drinks", result.Value.Name);
         _mockCategoryRepository.Verify(repo =>
             repo.AddAsync(It.IsAny<Category>(), It.IsAny<CancellationToken>()),
+            Times.Once);
+
+        _mockUnitOfWork.Verify(uow =>
+            uow.SaveChangesAsync(It.IsAny<CancellationToken>()),
             Times.Once);
     }
 }
