@@ -44,7 +44,7 @@ public class CreateBrandHandlerTests
 
         _mockUnitOfWork.Verify(uow =>
             uow.SaveChangesAsync(It.IsAny<CancellationToken>()),
-            Times.Once);
+            Times.Never);
     }
 
     [Fact]

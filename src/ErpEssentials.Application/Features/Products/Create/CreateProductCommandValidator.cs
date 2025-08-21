@@ -15,7 +15,10 @@ public class CreateProductCommandValidator : AbstractValidator<CreateProductComm
         RuleFor(x => x.Name)
             .NotEmpty()
             .WithErrorCode(ProductErrors.EmptyName.Code)
-            .WithMessage(ProductErrors.EmptyName.Message);
+            .WithMessage(ProductErrors.EmptyName.Message)
+            .Matches("^[a-zA-Z0-9- ]*$")
+            .WithErrorCode(ProductErrors.InvalidNameFormat.Code)
+            .WithMessage(ProductErrors.InvalidNameFormat.Message);
 
         RuleFor(x => x.Price)
             .GreaterThan(0)

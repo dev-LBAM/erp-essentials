@@ -10,6 +10,9 @@ public class CreateBrandCommandValidator : AbstractValidator<CreateBrandCommand>
         RuleFor(x => x.Name)
             .NotEmpty()
             .WithErrorCode(BrandErrors.EmptyName.Code)
-            .WithMessage(BrandErrors.EmptyName.Message);
+            .WithMessage(BrandErrors.EmptyName.Message)
+            .Matches("^[a-zA-Z0-9- ]*$")
+            .WithErrorCode(BrandErrors.InvalidNameFormat.Code)
+            .WithMessage(BrandErrors.InvalidNameFormat.Message);
     }
 }

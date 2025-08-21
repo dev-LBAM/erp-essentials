@@ -10,6 +10,9 @@ public class CreateCategoryCommandValidator : AbstractValidator<CreateCategoryCo
         RuleFor(x => x.Name)
             .NotEmpty()
             .WithErrorCode(CategoryErrors.EmptyName.Code)
-            .WithMessage(CategoryErrors.EmptyName.Message);
+            .WithMessage(CategoryErrors.EmptyName.Message)
+            .Matches("^[a-zA-Z0-9- ]*$")
+            .WithErrorCode(CategoryErrors.InvalidNameFormat.Code)
+            .WithMessage(CategoryErrors.InvalidNameFormat.Message);
     }
 }

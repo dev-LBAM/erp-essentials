@@ -11,6 +11,7 @@ public static class ProductErrors
     public static readonly Error NonNegativeCost = new DomainError("Product.NonNegativeCost", "Cost cannot be negative.", ErrorType.Validation);
     public static readonly Error EmptyBrandId = new DomainError("Product.EmptyBrandId", "BrandId cannot be empty.", ErrorType.Validation);
     public static readonly Error EmptyCategoryId = new DomainError("Product.EmptyCategoryId", "CategoryId cannot be empty.", ErrorType.Validation);
+    public static readonly Error InvalidNameFormat = new DomainError("Product.InvalidNameFormat", "The product name contains invalid characters.", ErrorType.Validation);
 
     // Business Rule Errors
     public static readonly Error InvalidStockQuantity = new DomainError("Product.InvalidStockQuantity", "Stock quantity must be positive.", ErrorType.Validation);
