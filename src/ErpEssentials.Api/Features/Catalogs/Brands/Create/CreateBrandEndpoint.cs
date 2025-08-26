@@ -1,6 +1,6 @@
 ﻿using Ardalis.ApiEndpoints;
 using ErpEssentials.Api.Common;
-using ErpEssentials.Api.Contracts.Catalogs.Brands.Create;
+using ErpEssentials.Application.Contracts.Catalogs.Brands;
 using ErpEssentials.Application.Features.Catalogs.Brands.Create;
 using ErpEssentials.Domain.Catalogs.Brands;
 using ErpEssentials.SharedKernel.ResultPattern;

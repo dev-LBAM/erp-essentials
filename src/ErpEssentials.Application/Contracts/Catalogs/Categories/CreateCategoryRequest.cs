@@ -1,4 +1,4 @@
-﻿namespace ErpEssentials.Api.Contracts.Catalogs.Categories.Create;
+﻿namespace ErpEssentials.Application.Contracts.Catalogs.Categories;
 
 public class CreateCategoryRequest
 {

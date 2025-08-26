@@ -1,4 +1,4 @@
-﻿namespace ErpEssentials.Api.Contracts.Catalogs.Brands.Create;
+﻿namespace ErpEssentials.Application.Contracts.Catalogs.Brands;
 
 public class CreateBrandRequest
 {

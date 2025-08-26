@@ -1,5 +1,4 @@
 ﻿using ErpEssentials.Domain.Catalogs.Brands;
-using ErpEssentials.Domain.Catalogs.Categories;
 using ErpEssentials.SharedKernel.Abstractions;
 using ErpEssentials.SharedKernel.Extensions;
 using ErpEssentials.SharedKernel.ResultPattern;

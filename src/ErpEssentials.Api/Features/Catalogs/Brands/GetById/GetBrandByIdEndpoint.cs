@@ -1,19 +1,32 @@
 ﻿using Ardalis.ApiEndpoints;
+using ErpEssentials.Api.Common;
+using ErpEssentials.Application.Contracts.Catalogs.Brands;
+using ErpEssentials.Application.Features.Catalogs.Brands.GetById;
+using ErpEssentials.SharedKernel.ResultPattern;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ErpEssentials.Api.Features.Catalogs.Brands.GetById;
 
-public class GetBrandByIdEndpoint : EndpointBaseAsync
+public class GetBrandByIdEndpoint(ISender sender) : EndpointBaseAsync
     .WithRequest<Guid>
-    .WithoutResult
+    .WithActionResult<BrandResponse>
 {
+
+    public readonly ISender _sender = sender;
+
     [HttpGet("/api/brands/{id:guid}", Name = BrandRoutes.GetById)]
-    public override Task<ActionResult> HandleAsync(Guid id, CancellationToken cancellationToken = default)
+    public override async Task<ActionResult<BrandResponse>> HandleAsync([FromRoute] Guid id, CancellationToken cancellationToken = default)
     {
-        // TODO: Implement the real logic by creating and sending a GetProductByIdQuery.
+        GetBrandByIdQuery query = new(id);
 
-        ActionResult result = StatusCode(StatusCodes.Status501NotImplemented, "This feature is not yet implemented.");
+        Result<BrandResponse> result = await _sender.Send(query, cancellationToken);
 
-        return Task.FromResult(result);
+        if (result.IsFailure)
+        {
+            return this.HandleFailure(result.Error);
+        }
+
+        return Ok(result.Value);
     }
 }

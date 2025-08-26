@@ -1,4 +1,6 @@
 using ErpEssentials.Application;
+using ErpEssentials.Application.Abstractions.Catalogs.Brands;
+using ErpEssentials.Application.Abstractions.Catalogs.Categories;
 using ErpEssentials.Application.Abstractions.Products;
 using ErpEssentials.Application.Behaviors;
 using ErpEssentials.Domain.Catalogs.Brands;
@@ -30,7 +32,8 @@ builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IBrandRepository, BrandRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IProductQueries, ProductQueries>();
-
+builder.Services.AddScoped<IBrandQueries, BrandQueries>();
+builder.Services.AddScoped<ICategoryQueries, CategoryQueries>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 builder.Services.AddValidatorsFromAssembly(typeof(AssemblyReference).Assembly);
