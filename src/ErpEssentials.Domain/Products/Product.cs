@@ -1,4 +1,6 @@
-﻿using ErpEssentials.Domain.Products.Lots;
+﻿using ErpEssentials.Domain.Catalogs.Brands;
+using ErpEssentials.Domain.Catalogs.Categories;
+using ErpEssentials.Domain.Products.Lots;
 using ErpEssentials.SharedKernel.Extensions;
 using ErpEssentials.SharedKernel.ResultPattern;
 
@@ -20,6 +22,8 @@ public class Product
     public bool IsActive { get; private set; }
     public DateTime CreatedAt { get; private set; }
     public DateTime? UpdatedAt { get; private set; }
+    public Brand? Brand { get; private set; }
+    public Category? Category { get; private set; }
 
     public IReadOnlyList<Lot> Lots => _lots.AsReadOnly();
 

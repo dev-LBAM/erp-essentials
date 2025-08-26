@@ -1,4 +1,4 @@
-﻿namespace ErpEssentials.Api.Contracts.Products.Create;
+﻿namespace ErpEssentials.Application.Contracts.Products;
 
 public class CreateProductRequest
 {

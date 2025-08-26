@@ -1,6 +1,6 @@
 ﻿using Ardalis.ApiEndpoints;
 using ErpEssentials.Api.Common;
-using ErpEssentials.Api.Contracts.Products.Create;
+using ErpEssentials.Application.Contracts.Products;
 using ErpEssentials.Application.Features.Products.Create;
 using ErpEssentials.Domain.Products;
 using ErpEssentials.SharedKernel.ResultPattern;
@@ -18,7 +18,6 @@ public class CreateProductEndpoint(ISender sender) : EndpointBaseAsync
     [HttpPost("/api/products")]
     public override async Task<ActionResult<Product>> HandleAsync([FromBody] CreateProductRequest request, CancellationToken cancellationToken = default)
     {
-        Console.Write("hi");
         CreateProductCommand command = new()
         {
             Sku = request.Sku,

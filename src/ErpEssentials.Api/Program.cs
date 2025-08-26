@@ -1,9 +1,11 @@
 using ErpEssentials.Application;
+using ErpEssentials.Application.Abstractions.Products;
 using ErpEssentials.Application.Behaviors;
 using ErpEssentials.Domain.Catalogs.Brands;
 using ErpEssentials.Domain.Catalogs.Categories;
 using ErpEssentials.Domain.Products;
 using ErpEssentials.Infrastructure.Persistence;
+using ErpEssentials.Infrastructure.Persistence.Queries;
 using ErpEssentials.Infrastructure.Persistence.Repositories;
 using ErpEssentials.SharedKernel.Abstractions;
 using FluentValidation;
@@ -27,6 +29,8 @@ builder.Services.AddMediatR(cfg =>
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IBrandRepository, BrandRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<IProductQueries, ProductQueries>();
+
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 builder.Services.AddValidatorsFromAssembly(typeof(AssemblyReference).Assembly);
