@@ -15,7 +15,7 @@ public class CreateBrandEndpoint(ISender sender) : EndpointBaseAsync
 {
     private readonly ISender _sender = sender;
 
-    [HttpPost("/api/brands")]
+    [HttpPost("/api/brands", Name = BrandRoutes.Create)]
     public override async Task<ActionResult<Brand>> HandleAsync([FromBody] CreateBrandRequest request, CancellationToken cancellationToken = default)
     {
         CreateBrandCommand command = new()
