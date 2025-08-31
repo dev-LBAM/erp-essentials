@@ -15,7 +15,7 @@ public class CreateCategoryEndpoint(ISender sender) : EndpointBaseAsync
 {
     private readonly ISender _sender = sender;
 
-    [HttpPost("/api/categories")]
+    [HttpPost("/api/categories", Name = CategoryRoutes.Create)]
     public override async Task<ActionResult<Category>> HandleAsync([FromBody] CreateCategoryRequest request, CancellationToken cancellationToken = default)
     {
         CreateCategoryCommand command = new()
