@@ -4,6 +4,7 @@ using ErpEssentials.Application.Features.Products.GetById;
 using ErpEssentials.Domain.Catalogs.Brands;
 using ErpEssentials.Domain.Catalogs.Categories;
 using ErpEssentials.Domain.Products;
+using ErpEssentials.Domain.Products.Data;
 using ErpEssentials.Domain.Products.Lots;
 using ErpEssentials.Infrastructure.Persistence;
 using ErpEssentials.Infrastructure.Persistence.Queries;

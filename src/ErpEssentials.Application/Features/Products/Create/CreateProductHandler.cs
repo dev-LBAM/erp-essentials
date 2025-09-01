@@ -1,4 +1,5 @@
 ﻿using ErpEssentials.Domain.Products;
+using ErpEssentials.Domain.Products.Data;
 using ErpEssentials.SharedKernel.Abstractions;
 using ErpEssentials.SharedKernel.ResultPattern;
 using MediatR;

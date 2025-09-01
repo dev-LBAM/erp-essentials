@@ -15,7 +15,7 @@ public class CreateProductEndpoint(ISender sender) : EndpointBaseAsync
 {
     private readonly ISender _sender = sender;
 
-    [HttpPost("/api/products")]
+    [HttpPost("/api/products", Name = ProductRoutes.Create)]
     public override async Task<ActionResult<Product>> HandleAsync([FromBody] CreateProductRequest request, CancellationToken cancellationToken = default)
     {
         CreateProductCommand command = new()

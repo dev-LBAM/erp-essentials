@@ -1,13 +1,13 @@
 ﻿namespace ErpEssentials.Application.Contracts.Products;
 
-public class CreateProductRequest
-{
-    public string Sku { get; set; } = string.Empty;
-    public string Name { get; set; } = string.Empty;
-    public string? Description { get; set; }
-    public string? Barcode { get; set; }
-    public decimal Price { get; set; }
-    public decimal Cost { get; set; }
-    public Guid BrandId { get; set; }
-    public Guid CategoryId { get; set; }
-}
+public record CreateProductRequest
+(
+     string Sku,
+     string Name,
+     string? Description,
+     string? Barcode,
+     decimal Price,
+     decimal Cost,
+     Guid BrandId,
+     Guid CategoryId
+);
