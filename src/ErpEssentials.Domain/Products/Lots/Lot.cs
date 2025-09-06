@@ -1,4 +1,5 @@
-﻿using ErpEssentials.SharedKernel.ResultPattern;
+﻿using ErpEssentials.Domain.Products.Data;
+using ErpEssentials.SharedKernel.ResultPattern;
 
 namespace ErpEssentials.Domain.Products.Lots;
 

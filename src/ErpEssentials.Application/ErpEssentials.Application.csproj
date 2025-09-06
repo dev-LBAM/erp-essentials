@@ -10,10 +10,6 @@
     <PackageReference Include="MediatR" Version="13.0.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Features\Catalogs\Categories\Update\" />
-  </ItemGroup>
-
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>

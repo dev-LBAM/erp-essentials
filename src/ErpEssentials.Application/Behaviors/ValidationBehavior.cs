@@ -31,15 +31,18 @@ public class ValidationBehavior<TRequest, TResponse>(IEnumerable<IValidator<TReq
         // Create a context for FluentValidation, which contains the request to be validated.
         ValidationContext<TRequest> context = new(request);
 
+        // We execute all validators asynchronously and wait for all to complete.
+        ValidationResult[] validationResults = await Task.WhenAll(
+            _validators.Select(v => v.ValidateAsync(context, cancellationToken)));
+
         // We use LINQ to execute all found validators:
         //  - .Select executes 'Validate' on each validator.
         //  - .SelectMany flattens the lists of errors from each result into a single list.
         //  - .Where ensures we don't have any null failures.
         //  - The collection expression `[..]` (C# 12) concisely creates the final list.
-        List<ValidationFailure> validationFailures = [.. _validators
-            .Select(validator => validator.Validate(context))
-            .SelectMany(validationResult => validationResult.Errors)
-            .Where(validationFailure => validationFailure != null)];
+        List<ValidationFailure> validationFailures = [.. validationResults
+            .SelectMany(result => result.Errors)
+            .Where(failure => failure != null)];
 
         // STEP 3: Failure Handling ("Fail Fast")
         // If our list of failures contains any items, validation has failed.

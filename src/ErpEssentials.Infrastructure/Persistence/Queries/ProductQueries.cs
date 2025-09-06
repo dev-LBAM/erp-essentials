@@ -19,10 +19,14 @@ public class ProductQueries(AppDbContext context) : IProductQueries
                 p.Id, 
                 p.Sku, 
                 p.Name, 
-                p.Description, 
+                p.Description,
+                p.Barcode,
                 p.Price,
-                p.Brand!.Name, 
-                p.Category!.Name, 
+                p.Cost,
+                p.Brand!.Name ?? "",
+                p.Category!.Name ?? "",
+                p.CreatedAt,
+                p.UpdatedAt,
                 p.Lots.Sum(l => l.Quantity)
             ))
             .FirstOrDefaultAsync(cancellationToken);

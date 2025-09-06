@@ -1,8 +1,10 @@
 ﻿using ErpEssentials.Domain.Catalogs.Brands;
 using ErpEssentials.Domain.Catalogs.Categories;
+using ErpEssentials.Domain.Products.Data;
 using ErpEssentials.Domain.Products.Lots;
 using ErpEssentials.SharedKernel.Extensions;
 using ErpEssentials.SharedKernel.ResultPattern;
+using System.Xml.Linq;
 
 namespace ErpEssentials.Domain.Products;
 
@@ -63,6 +65,40 @@ public class Product
         };
 
         return Result<Product>.Success(product);
+    }
+
+    public Result UpdateDetails(UpdateProductDetailsData productDetailsData)
+    {
+        List<Error> errors = [];
+
+        if (errors.Count != 0)
+        {
+            Dictionary<string, string[]> errorsDictionary = errors.ToDictionary(e => e.Code.Split('.').Last(), e => new[] { e.Message });
+            return Result.Failure(new ValidationError(errorsDictionary));
+        }
+
+        if (productDetailsData.NewName is not null)
+        {
+            string standardizedName = productDetailsData.NewName.ToTitleCaseStandard();
+            if (string.IsNullOrWhiteSpace(standardizedName))
+            {
+                return Result.Failure(ProductErrors.EmptyName);
+            }
+            Name = standardizedName;
+        }
+
+        if (!string.IsNullOrWhiteSpace(productDetailsData.NewDescription))
+        {
+            Description = productDetailsData.NewDescription;
+        }
+
+        if (!string.IsNullOrWhiteSpace(productDetailsData.NewBarcode))
+        {
+            Barcode = productDetailsData.NewBarcode;
+        }
+        UpdatedAt = DateTime.UtcNow;
+
+        return Result.Success();
     }
 
     public int GetTotalStock() => _lots.Sum(l => l.Quantity);

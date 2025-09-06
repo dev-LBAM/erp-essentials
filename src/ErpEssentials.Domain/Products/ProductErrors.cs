@@ -5,12 +5,19 @@ namespace ErpEssentials.Domain.Products;
 public static class ProductErrors
 {
     // Validation Errors
-    public static readonly Error EmptySku = new DomainError("Product.EmptySku", "SKU cannot be empty.", ErrorType.Validation);
-    public static readonly Error EmptyName = new DomainError("Product.EmptyName", "Name cannot be empty.", ErrorType.Validation);
-    public static readonly Error NonPositivePrice = new DomainError("Product.NonPositivePrice", "Price must be a positive value.", ErrorType.Validation);
-    public static readonly Error NonNegativeCost = new DomainError("Product.NonNegativeCost", "Cost cannot be negative.", ErrorType.Validation);
-    public static readonly Error EmptyBrandId = new DomainError("Product.EmptyBrandId", "BrandId cannot be empty.", ErrorType.Validation);
-    public static readonly Error EmptyCategoryId = new DomainError("Product.EmptyCategoryId", "CategoryId cannot be empty.", ErrorType.Validation);
+    public static readonly Error EmptySku = new DomainError("Product.EmptySku", "The product SKU cannot be empty.", ErrorType.Validation);
+    public static readonly Error EmptyName = new DomainError("Product.EmptyName", "The product name cannot be empty.", ErrorType.Validation);
+    public static readonly Error EmptyId = new DomainError("Product.EmptyId", "The product id cannot be empty.", ErrorType.Validation);
+    public static readonly Error EmptyBrandId = new DomainError("Product.EmptyBrandId", "The product BrandId cannot be empty.", ErrorType.Validation);
+    public static readonly Error EmptyCategoryId = new DomainError("Product.EmptyCategoryId", "The product CategoryId cannot be empty.", ErrorType.Validation);
+
+    public static readonly Error NameTooLong = new DomainError("Product.NameTooLong", "The product name cannot exceed 100 characters.", ErrorType.Validation);
+    public static readonly Error DescriptionTooLong = new DomainError("Product.DescriptionTooLong", "The product description cannot exceed 500 characters.", ErrorType.Validation);
+    public static readonly Error BarcodeTooLong = new DomainError("Product.BarcodeTooLong", "The product barcode cannot exceed 13 characters.", ErrorType.Validation);
+    
+    public static readonly Error BarcodeInUse = new DomainError("Product.BarcodeInUse", "This product barcode is already in use.", ErrorType.Conflict);
+    public static readonly Error NonPositivePrice = new DomainError("Product.NonPositivePrice", "The product price must be a positive value.", ErrorType.Validation);
+    public static readonly Error NonNegativeCost = new DomainError("Product.NonNegativeCost", "The product cost cannot be negative.", ErrorType.Validation);
     public static readonly Error InvalidNameFormat = new DomainError("Product.InvalidNameFormat", "The product name contains invalid characters.", ErrorType.Validation);
 
     // Business Rule Errors

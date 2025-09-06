@@ -5,8 +5,12 @@ public record ProductResponse(
     string Sku,
     string Name,
     string? Description,
+    string? Barcode,
     decimal Price,
+    decimal Cost,
     string BrandName,
     string CategoryName,
+    DateTime CreateAt,
+    DateTime? UpdatedAt,
     int TotalStock
 );

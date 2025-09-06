@@ -1,4 +1,4 @@
-﻿namespace ErpEssentials.Domain.Products;
+﻿namespace ErpEssentials.Domain.Products.Data;
 
 public record CreateProductData(
     string Sku,

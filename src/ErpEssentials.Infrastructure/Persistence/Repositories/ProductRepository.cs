@@ -18,15 +18,17 @@ public class ProductRepository(AppDbContext context) : IProductRepository
             .FirstOrDefaultAsync(p => p.Sku == sku, cancellationToken);
     }
 
-    public Task<Product?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<Product?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        // We throw this exception because the 'GetProductById' feature has not been implemented yet.
-        throw new NotImplementedException();
+        return await _context.Products
+        .Include(p => p.Brand)
+        .Include(p => p.Category)
+        .Include(p => p.Lots)
+        .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
     }
 
-    public Task UpdateAsync(Product product, CancellationToken cancellationToken = default)
+    public async Task<bool> IsBarcodeUniqueAsync(string barcode, CancellationToken cancellationToken = default)
     {
-        // We throw this exception because no 'Update' feature has been implemented yet.
-        throw new NotImplementedException();
+        return !await _context.Products.AnyAsync(p => p.Barcode == barcode, cancellationToken);
     }
 }
