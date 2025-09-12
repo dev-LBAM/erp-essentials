@@ -18,11 +18,11 @@ public class UpdateProductDetailsEndpoint(ISender sender) : EndpointBase
     public async Task<ActionResult> HandleAsync([FromRoute] Guid id, [FromBody] UpdateProductDetailsRequest request, CancellationToken cancellationToken = default)
     {
         UpdateProductDetailsCommand command = new(id, request.NewName, request.NewDescription, request.NewBarcode);
-        Result result = await _sender.Send(command, cancellationToken);
+        Result<ProductResponse> result = await _sender.Send(command, cancellationToken);
         if (result.IsFailure)
         {
             return this.HandleFailure(result.Error);
         }
-        return Ok(result);
+        return Ok(result.Value);
     }
 }

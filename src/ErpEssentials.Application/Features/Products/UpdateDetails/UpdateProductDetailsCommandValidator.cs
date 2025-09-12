@@ -24,7 +24,7 @@ public class UpdateProductDetailsCommandValidator : AbstractValidator<UpdateProd
                 .MaximumLength(100)
                     .WithErrorCode(ProductErrors.NameTooLong.Code)
                     .WithMessage(ProductErrors.NameTooLong.Message)
-                .Matches("^[a-zA-Z0-9- ]*$")
+                .Matches("^[a-zA-Z0-9À-ÿ\\s\\-/()']+$")
                     .WithErrorCode(ProductErrors.InvalidNameFormat.Code)
                     .WithMessage(ProductErrors.InvalidNameFormat.Message);
         });

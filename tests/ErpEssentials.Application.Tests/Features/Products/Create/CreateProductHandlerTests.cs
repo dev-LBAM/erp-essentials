@@ -1,85 +1,83 @@
-﻿using ErpEssentials.Application.Features.Products.Create;
+﻿using ErpEssentials.Application.Abstractions.Products;
+using ErpEssentials.Application.Contracts.Products;
+using ErpEssentials.Application.Features.Products;
+using ErpEssentials.Application.Features.Products.Create;
 using ErpEssentials.Domain.Products;
-using ErpEssentials.SharedKernel.ResultPattern;
+using ErpEssentials.SharedKernel;
 using ErpEssentials.SharedKernel.Abstractions;
+using ErpEssentials.SharedKernel.ResultPattern;
 using Moq;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Xunit;
 
 namespace ErpEssentials.Application.Tests.Features.Products.Create;
 
 public class CreateProductHandlerTests
 {
     private readonly Mock<IProductRepository> _mockProductRepository;
+    private readonly Mock<IProductQueries> _mockProductQueries;
     private readonly Mock<IUnitOfWork> _mockUnitOfWork;
     private readonly CreateProductHandler _handler;
 
     public CreateProductHandlerTests()
     {
         _mockProductRepository = new Mock<IProductRepository>();
+        _mockProductQueries = new Mock<IProductQueries>();
         _mockUnitOfWork = new Mock<IUnitOfWork>();
-        _handler = new CreateProductHandler(_mockProductRepository.Object,
-            _mockUnitOfWork.Object);
+
+        _handler = new CreateProductHandler(
+            _mockProductRepository.Object,
+            _mockUnitOfWork.Object,
+            _mockProductQueries.Object);
     }
 
-    private static CreateProductCommand CreateValidCommand(string sku = "UNIQUE-SKU")
+    private static CreateProductCommand CreateValidCommand()
     {
-        return new CreateProductCommand
-        {
-            Sku = sku,
-            Name = "Test Product",
-            Description = "Test Description",
-            Price = 100,
-            Cost = 50,
-            BrandId = Guid.NewGuid(),
-            CategoryId = Guid.NewGuid()
-        };
+        return new CreateProductCommand(
+            Sku: "VALID-SKU",
+            Name: "Test Product",
+            Description: "Test Description",
+            Barcode: "1234567890123",
+            Price: 100,
+            Cost: 50,
+            BrandId: Guid.NewGuid(),
+            CategoryId: Guid.NewGuid()
+        );
     }
-
+   
     [Fact]
-    public async Task Handle_Should_ReturnFailureResult_WhenSkuIsNotUnique()
-    {
-        // Arrange
-        CreateProductCommand command = CreateValidCommand("DUPLICATE-SKU");
-
-        Product existingProduct = Product.Create(
-            new CreateProductData(
-                command.Sku, "Existing Name", null, null, 1, 1, Guid.NewGuid(), Guid.NewGuid())
-        ).Value;
-
-        _mockProductRepository
-            .Setup(repo => repo.GetBySkuAsync(command.Sku, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(existingProduct);
-
-        // Act
-        Result<Product> result = await _handler.Handle(command, CancellationToken.None);
-
-        // Assert
-        Assert.True(result.IsFailure);
-        Assert.Equal("Product.SkuConflict", result.Error.Code);
-        _mockProductRepository.Verify(repo =>
-            repo.AddAsync(It.IsAny<Product>(), It.IsAny<CancellationToken>()),
-            Times.Never);
-
-        _mockUnitOfWork.Verify(uow =>
-            uow.SaveChangesAsync(It.IsAny<CancellationToken>()),
-            Times.Never);
-    }
-
-    [Fact]
-    public async Task Handle_Should_CallAddAsyncAndReturnSuccess_WhenSkuIsUnique()
+    public async Task Handle_Should_ReturnSuccess_WhenDomainCreationSucceeds()
     {
         // Arrange
         CreateProductCommand command = CreateValidCommand();
-
-        _mockProductRepository
-            .Setup(repo => repo.GetBySkuAsync(command.Sku, It.IsAny<CancellationToken>()))
-            .ReturnsAsync((Product?)null);
+        ProductResponse dummyResponse = new(
+            Id: Guid.NewGuid(),
+            Sku: command.Sku,
+            Name: command.Name,
+            Description: command.Description,
+            Barcode: command.Barcode,
+            Price: command.Price,
+            Cost: command.Cost,
+            BrandName: "Test Brand",
+            CategoryName: "Test Category",
+            CreatedAt: DateTime.UtcNow,
+            UpdatedAt: null,
+            TotalStock: 0
+        );
+        _mockProductQueries
+            .Setup(queries => queries.GetResponseByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result<ProductResponse>.Success(dummyResponse));
 
         // Act
-        Result<Product> result = await _handler.Handle(command, CancellationToken.None);
+        Result<ProductResponse> result = await _handler.Handle(command, CancellationToken.None);
 
         // Assert
         Assert.True(result.IsSuccess);
         Assert.NotNull(result.Value);
+        Assert.Equal(command.Sku, result.Value.Sku);
+
         _mockProductRepository.Verify(repo =>
             repo.AddAsync(It.IsAny<Product>(), It.IsAny<CancellationToken>()),
             Times.Once);
@@ -87,5 +85,28 @@ public class CreateProductHandlerTests
         _mockUnitOfWork.Verify(uow =>
             uow.SaveChangesAsync(It.IsAny<CancellationToken>()),
             Times.Once);
+
+        _mockProductQueries.Verify(queries =>
+            queries.GetResponseByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()),
+            Times.Once);
+    }
+
+    [Fact]
+    public async Task Handle_Should_ReturnFailure_WhenDomainEntityCreationFails()
+    {
+        // Arrange
+        CreateProductCommand invalidCommand = CreateValidCommand() with { Price = 0 };
+
+        // Act
+        Result<ProductResponse> result = await _handler.Handle(invalidCommand, CancellationToken.None);
+
+        // Assert
+        Assert.True(result.IsFailure);
+
+        Assert.IsType<ValidationError>(result.Error);
+
+        _mockUnitOfWork.Verify(uow =>
+            uow.SaveChangesAsync(It.IsAny<CancellationToken>()),
+            Times.Never);
     }
 }

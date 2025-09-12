@@ -61,7 +61,8 @@ public class Product
             BrandId = productData.BrandId,
             CategoryId = productData.CategoryId,
             IsActive = true,
-            CreatedAt = DateTime.UtcNow
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow
         };
 
         return Result<Product>.Success(product);

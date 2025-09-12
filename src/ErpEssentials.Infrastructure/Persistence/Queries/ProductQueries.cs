@@ -13,23 +13,26 @@ public class ProductQueries(AppDbContext context) : IProductQueries
     public async Task<Result<ProductResponse>> GetResponseByIdAsync(Guid productId, CancellationToken cancellationToken = default)
     {
         ProductResponse? product = await _context.Products
-            .AsNoTracking()
-            .Where(p => p.Id == productId)
-            .Select(p => new ProductResponse(
-                p.Id, 
-                p.Sku, 
-                p.Name, 
-                p.Description,
-                p.Barcode,
-                p.Price,
-                p.Cost,
-                p.Brand!.Name ?? "",
-                p.Category!.Name ?? "",
-                p.CreatedAt,
-                p.UpdatedAt,
-                p.Lots.Sum(l => l.Quantity)
-            ))
-            .FirstOrDefaultAsync(cancellationToken);
+        .AsNoTracking()
+        .Include(p => p.Brand)
+        .Include(p => p.Category)
+        .Where(p => p.Id == productId)
+        .Select(p => new ProductResponse(
+            p.Id,
+            p.Sku,
+            p.Name,
+            p.Description ?? string.Empty,
+            p.Barcode ?? string.Empty,
+            p.Price,
+            p.Cost,
+            p.Brand != null ? p.Brand.Name : string.Empty,
+            p.Category != null ? p.Category.Name : string.Empty,
+            p.CreatedAt,
+            p.UpdatedAt ?? p.CreatedAt,
+            p.Lots.Sum(l => (int?)l.Quantity) ?? 0
+        ))
+        .FirstOrDefaultAsync(cancellationToken);
+
 
         if (product is null)
         {
