@@ -23,8 +23,8 @@ public class ProductQueries(AppDbContext context) : IProductQueries
                 p.Barcode,
                 p.Price,
                 p.Cost,
-                p.Brand!.Name ?? "",
-                p.Category!.Name ?? "",
+                p.Brand!.Name,
+                p.Category!.Name,
                 p.CreatedAt,
                 p.UpdatedAt,
                 p.Lots.Sum(l => l.Quantity)

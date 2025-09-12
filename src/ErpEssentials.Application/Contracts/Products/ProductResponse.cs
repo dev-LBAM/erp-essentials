@@ -10,7 +10,7 @@ public record ProductResponse(
     decimal Cost,
     string BrandName,
     string CategoryName,
-    DateTime CreateAt,
+    DateTime CreatedAt,
     DateTime? UpdatedAt,
     int TotalStock
 );

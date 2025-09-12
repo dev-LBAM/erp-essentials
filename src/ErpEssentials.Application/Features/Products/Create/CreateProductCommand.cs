@@ -1,4 +1,4 @@
-﻿using ErpEssentials.Domain.Products;
+﻿using ErpEssentials.Application.Contracts.Products;
 using ErpEssentials.SharedKernel.ResultPattern;
 using MediatR;
 
@@ -14,4 +14,4 @@ public record CreateProductCommand
     decimal Cost,
     Guid BrandId,
     Guid CategoryId
-) : IRequest<Result<Product>>; 
+) : IRequest<Result<ProductResponse>>; 

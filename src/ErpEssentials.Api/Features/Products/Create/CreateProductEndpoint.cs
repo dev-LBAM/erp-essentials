@@ -11,26 +11,28 @@ namespace ErpEssentials.Api.Features.Products.Create;
 
 public class CreateProductEndpoint(ISender sender) : EndpointBaseAsync
     .WithRequest<CreateProductRequest>
-    .WithActionResult<Product>
+    .WithActionResult<ProductResponse>
 {
     private readonly ISender _sender = sender;
 
     [HttpPost("/api/products", Name = ProductRoutes.Create)]
-    public override async Task<ActionResult<Product>> HandleAsync([FromBody] CreateProductRequest request, CancellationToken cancellationToken = default)
+    [ProducesResponseType(typeof(ProductResponse), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ValidationError), StatusCodes.Status400BadRequest)]
+    public override async Task<ActionResult<ProductResponse>> HandleAsync([FromBody] CreateProductRequest request, CancellationToken cancellationToken = default)
     {
-        CreateProductCommand command = new()
-        {
-            Sku = request.Sku,
-            Name = request.Name,
-            Description = request.Description,
-            Barcode = request.Barcode,
-            Price = request.Price,
-            Cost = request.Cost,
-            BrandId = request.BrandId,
-            CategoryId = request.CategoryId
-        };
+        CreateProductCommand command = new
+        (
+            request.Sku,
+            request.Name,
+            request.Description,
+            request.Barcode,
+            request.Price,
+            request.Cost,
+            request.BrandId,
+            request.CategoryId
+        );
 
-        Result<Product> result = await _sender.Send(command, cancellationToken);
+        Result<ProductResponse> result = await _sender.Send(command, cancellationToken);
 
         if (result.IsFailure)
         {
