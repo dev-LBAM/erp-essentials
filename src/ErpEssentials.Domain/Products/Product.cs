@@ -68,14 +68,14 @@ public class Product
         return Result<Product>.Success(product);
     }
 
-    public Result UpdateDetails(UpdateProductDetailsData productDetailsData)
+    public Result<Product> UpdateDetails(UpdateProductDetailsData productDetailsData)
     {
         List<Error> errors = [];
 
         if (errors.Count != 0)
         {
             Dictionary<string, string[]> errorsDictionary = errors.ToDictionary(e => e.Code.Split('.').Last(), e => new[] { e.Message });
-            return Result.Failure(new ValidationError(errorsDictionary));
+            return Result<Product>.Failure(new ValidationError(errorsDictionary));
         }
 
         if (productDetailsData.NewName is not null)
@@ -83,7 +83,7 @@ public class Product
             string standardizedName = productDetailsData.NewName.ToTitleCaseStandard();
             if (string.IsNullOrWhiteSpace(standardizedName))
             {
-                return Result.Failure(ProductErrors.EmptyName);
+                return Result<Product>.Failure(ProductErrors.EmptyName);
             }
             Name = standardizedName;
         }
@@ -99,8 +99,10 @@ public class Product
         }
         UpdatedAt = DateTime.UtcNow;
 
-        return Result.Success();
+        return Result<Product>.Success(this);
     }
+
+
 
     public int GetTotalStock() => _lots.Sum(l => l.Quantity);
 

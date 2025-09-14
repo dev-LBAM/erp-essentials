@@ -1,4 +1,5 @@
-﻿using ErpEssentials.Application.Contracts.Products;
+﻿using ErpEssentials.Application.Abstractions.Products;
+using ErpEssentials.Application.Contracts.Products;
 using ErpEssentials.Application.Features.Products.UpdateDetails;
 using ErpEssentials.Domain.Catalogs.Brands;
 using ErpEssentials.Domain.Catalogs.Categories;
@@ -14,6 +15,7 @@ public class UpdateProductDetailsHandlerTests
 {
     private readonly Mock<IProductRepository> _mockProductRepository;
     private readonly Mock<IUnitOfWork> _mockUnitOfWork;
+    private readonly Mock<IProductQueries> _mockProductQueries;
     private readonly UpdateProductDetailsHandler _handler;
 
     private static Product CreateTestProduct()
@@ -32,7 +34,11 @@ public class UpdateProductDetailsHandlerTests
     {
         _mockProductRepository = new Mock<IProductRepository>();
         _mockUnitOfWork = new Mock<IUnitOfWork>();
-        _handler = new UpdateProductDetailsHandler(_mockProductRepository.Object, _mockUnitOfWork.Object);
+        _mockProductQueries = new Mock<IProductQueries>();
+        _handler = new UpdateProductDetailsHandler(
+            _mockProductRepository.Object, 
+            _mockUnitOfWork.Object,
+            _mockProductQueries.Object);
     }
 
     [Fact]
@@ -78,10 +84,27 @@ public class UpdateProductDetailsHandlerTests
         // Arrange
         Product product = CreateTestProduct();
         UpdateProductDetailsCommand command = new(product.Id, "New Name", "New Desc", "New Barcode");
-
+        ProductResponse dummyResponse = new(
+            Id: Guid.NewGuid(),
+            Sku: product.Sku,
+            Name: command.NewName!,
+            Description: command.NewDescription,
+            Barcode: command.NewBarcode,
+            Price: product.Price,
+            Cost: product.Cost,
+            BrandName: "Test Brand",
+            CategoryName: "Test Category",
+            CreatedAt: DateTime.UtcNow,
+            UpdatedAt: null,
+            TotalStock: 0
+        );
         _mockProductRepository
-            .Setup(repo => repo.GetByIdAsync(command.ProductId, It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(product);
+
+        _mockProductQueries
+            .Setup(queries => queries.GetResponseByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result<ProductResponse>.Success(dummyResponse));
 
         // Act
         Result<ProductResponse> result = await _handler.Handle(command, CancellationToken.None);
@@ -91,10 +114,10 @@ public class UpdateProductDetailsHandlerTests
         Assert.NotNull(result.Value);
 
         ProductResponse response = result.Value;
-        Assert.Equal("New Name", response.Name);
-        Assert.Equal("New Desc", response.Description);
-        Assert.Equal("New Barcode", response.Barcode);
-        Assert.Equal("Test Brand", response.BrandName);
+        Assert.Equal(dummyResponse.Name, response.Name);
+        Assert.Equal(dummyResponse.Description, response.Description);
+        Assert.Equal(dummyResponse.Barcode, response.Barcode);
+        Assert.Equal(dummyResponse.BrandName, response.BrandName);
 
         _mockUnitOfWork.Verify(uow => uow.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
