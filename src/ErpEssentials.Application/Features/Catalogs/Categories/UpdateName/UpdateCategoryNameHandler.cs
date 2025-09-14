@@ -1,39 +1,38 @@
-﻿using ErpEssentials.Domain.Catalogs.Categories;
+﻿using ErpEssentials.Application.Abstractions.Catalogs.Categories;
+using ErpEssentials.Application.Contracts.Catalogs.Categories;
+using ErpEssentials.Domain.Catalogs.Categories;
 using ErpEssentials.SharedKernel.Abstractions;
-using ErpEssentials.SharedKernel.Extensions;
 using ErpEssentials.SharedKernel.ResultPattern;
 using MediatR;
 
 namespace ErpEssentials.Application.Features.Catalogs.Categories.UpdateName;
 
-public class UpdateCategoryNameHandler(ICategoryRepository CategoryRepository, IUnitOfWork unitOfWork) : IRequestHandler<UpdateCategoryNameCommand, Result>
+public class UpdateCategoryNameHandler(
+    ICategoryRepository categoryRepository,
+    IUnitOfWork unitOfWork,
+    ICategoryQueries categoryQueries) : IRequestHandler<UpdateCategoryNameCommand, Result<CategoryResponse>>
 {
-    private readonly ICategoryRepository _CategoryRepository = CategoryRepository;
+    private readonly ICategoryRepository _categoryRepository = categoryRepository;
+    private readonly ICategoryQueries _categoryQueries = categoryQueries;
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
-    public async Task<Result> Handle(UpdateCategoryNameCommand request, CancellationToken cancellationToken)
+    public async Task<Result<CategoryResponse>> Handle(UpdateCategoryNameCommand request, CancellationToken cancellationToken)
     {
-        Category? Category = await _CategoryRepository.GetByIdAsync(request.CategoryId, cancellationToken);
+        Category? Category = await _categoryRepository.GetByIdAsync(request.CategoryId, cancellationToken);
         if (Category is null)
         {
-            return Result.Failure(CategoryErrors.NotFound);
+            return Result<CategoryResponse>.Failure(CategoryErrors.NotFound);
         }
 
-        string standardizedName = request.NewName.ToTitleCaseStandard();
-
-        bool isNameUnique = await _CategoryRepository.IsNameUniqueAsync(standardizedName, cancellationToken);
-        if (!isNameUnique)
+        Result<Category> updateCategoryResult = Category.UpdateName(request.NewName);
+        if (updateCategoryResult.IsFailure)
         {
-            return Result.Failure(CategoryErrors.NameInUse);
+            return Result<CategoryResponse>.Failure(updateCategoryResult.Error);
         }
 
-        Result updateResult = Category.UpdateName(request.NewName);
-        if (updateResult.IsFailure)
-        {
-            return updateResult;
-        }
+        Category newCategory = updateCategoryResult.Value;
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
-        return Result.Success();
+        return await _categoryQueries.GetResponseByIdAsync(newCategory.Id, cancellationToken);
     }
 }

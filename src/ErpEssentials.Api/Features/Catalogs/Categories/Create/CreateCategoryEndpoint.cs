@@ -2,7 +2,6 @@
 using ErpEssentials.Api.Common;
 using ErpEssentials.Application.Contracts.Catalogs.Categories;
 using ErpEssentials.Application.Features.Catalogs.Categories.Create;
-using ErpEssentials.Domain.Catalogs.Categories;
 using ErpEssentials.SharedKernel.ResultPattern;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -11,19 +10,18 @@ namespace ErpEssentials.Api.Features.Catalogs.Categories.Create;
 
 public class CreateCategoryEndpoint(ISender sender) : EndpointBaseAsync
     .WithRequest<CreateCategoryRequest>
-    .WithActionResult<Category>
+    .WithActionResult<CategoryResponse>
 {
     private readonly ISender _sender = sender;
 
     [HttpPost("/api/categories", Name = CategoryRoutes.Create)]
-    public override async Task<ActionResult<Category>> HandleAsync([FromBody] CreateCategoryRequest request, CancellationToken cancellationToken = default)
+    [ProducesResponseType(typeof(CategoryResponse), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ValidationError), StatusCodes.Status400BadRequest)]
+    public override async Task<ActionResult<CategoryResponse>> HandleAsync([FromBody] CreateCategoryRequest request, CancellationToken cancellationToken = default)
     {
-        CreateCategoryCommand command = new()
-        {
-            Name = request.Name,
-        };
+        CreateCategoryCommand command = new( Name: request.Name );
 
-        Result<Category> result = await _sender.Send(command, cancellationToken);
+        Result<CategoryResponse> result = await _sender.Send(command, cancellationToken);
 
         if (result.IsFailure)
         {

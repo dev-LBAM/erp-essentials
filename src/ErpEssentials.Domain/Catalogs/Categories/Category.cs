@@ -1,4 +1,5 @@
-﻿using ErpEssentials.SharedKernel.Extensions;
+﻿using ErpEssentials.Domain.Products;
+using ErpEssentials.SharedKernel.Extensions;
 using ErpEssentials.SharedKernel.ResultPattern;
 
 namespace ErpEssentials.Domain.Catalogs.Categories;
@@ -28,16 +29,16 @@ public class Category
         return Result<Category>.Success(Category);
     }
 
-    public Result UpdateName(string newName)
+    public Result<Category> UpdateName(string newName)
     {
         string standardizedName = newName.ToTitleCaseStandard();
 
         if (string.IsNullOrWhiteSpace(standardizedName))
         {
-            return Result.Failure(CategoryErrors.EmptyName);
+            return Result<Category>.Failure(CategoryErrors.EmptyName);
         }
 
         Name = standardizedName;
-        return Result.Success();
+        return Result<Category>.Success(this);
     }
 }

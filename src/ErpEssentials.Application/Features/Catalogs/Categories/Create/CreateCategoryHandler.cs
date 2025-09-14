@@ -1,37 +1,34 @@
-﻿using ErpEssentials.Domain.Catalogs.Categories;
+﻿using ErpEssentials.Application.Abstractions.Catalogs.Categories;
+using ErpEssentials.Application.Contracts.Catalogs.Categories;
+using ErpEssentials.Domain.Catalogs.Categories;
 using ErpEssentials.SharedKernel.Abstractions;
-using ErpEssentials.SharedKernel.Extensions;
 using ErpEssentials.SharedKernel.ResultPattern;
 using MediatR;
 
 namespace ErpEssentials.Application.Features.Catalogs.Categories.Create;
 
-public class CreateCategoryHandler(ICategoryRepository categoryRepository, IUnitOfWork unitOfWork) : IRequestHandler<CreateCategoryCommand, Result<Category>>
+public class CreateCategoryHandler(
+    ICategoryRepository categoryRepository, 
+    IUnitOfWork unitOfWork,
+    ICategoryQueries categoryQueries ) : IRequestHandler<CreateCategoryCommand, Result<CategoryResponse>>
 {
     private readonly ICategoryRepository _categoryRepository = categoryRepository;
+    private readonly ICategoryQueries _categoryQueries = categoryQueries;
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
-
-    public async Task<Result<Category>> Handle(CreateCategoryCommand request, CancellationToken cancellationToken)
+    public async Task<Result<CategoryResponse>> Handle(CreateCategoryCommand request, CancellationToken cancellationToken)
     {
-        string standardizedName = request.Name.ToTitleCaseStandard();
 
-        bool isNameUnique = await _categoryRepository.IsNameUniqueAsync(standardizedName, cancellationToken);
-        if (!isNameUnique)
-        {
-            return Result<Category>.Failure(CategoryErrors.NameInUse);
-        }
-
-        Result<Category> categoryResult = Category.Create(standardizedName);
+        Result<Category> categoryResult = Category.Create(request.Name);
         if (categoryResult.IsFailure)
         {
-            return Result<Category>.Failure(categoryResult.Error);
+            return Result<CategoryResponse>.Failure(categoryResult.Error);
         }
 
         Category newCategory = categoryResult.Value;
+
         await _categoryRepository.AddAsync(newCategory, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
-
-        return Result<Category>.Success(newCategory);
+        return await _categoryQueries.GetResponseByIdAsync(newCategory.Id, cancellationToken);
     }
 }

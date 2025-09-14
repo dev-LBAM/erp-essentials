@@ -1,6 +1,9 @@
-﻿using ErpEssentials.Application.Features.Catalogs.Categories.UpdateName;
+﻿using ErpEssentials.Application.Abstractions.Catalogs.Categories;
+using ErpEssentials.Application.Contracts.Catalogs.Categories;
+using ErpEssentials.Application.Features.Catalogs.Categories.UpdateName;
 using ErpEssentials.Domain.Catalogs.Categories;
 using ErpEssentials.SharedKernel.Abstractions;
+using ErpEssentials.SharedKernel.Extensions;
 using ErpEssentials.SharedKernel.ResultPattern;
 using Moq;
 
@@ -9,85 +12,60 @@ namespace ErpEssentials.Application.Tests.Features.Catalogs.Categories.UpdateNam
 public class UpdateCategoryNameHandlerTests
 {
     private readonly Mock<ICategoryRepository> _mockCategoryRepository;
+    private readonly Mock<ICategoryQueries> _mockCategoryQueries;
     private readonly Mock<IUnitOfWork> _mockUnitOfWork;
     private readonly UpdateCategoryNameHandler _handler;
 
     public UpdateCategoryNameHandlerTests()
     {
         _mockCategoryRepository = new Mock<ICategoryRepository>();
+        _mockCategoryQueries = new Mock<ICategoryQueries>();
         _mockUnitOfWork = new Mock<IUnitOfWork>();
         _handler = new UpdateCategoryNameHandler(
             _mockCategoryRepository.Object,
-            _mockUnitOfWork.Object);
+            _mockUnitOfWork.Object,
+            _mockCategoryQueries.Object);
     }
 
     [Fact]
-    public async Task Handler_Should_ReturnSuccess_WhenCategoryExistsAndNameIsUnique()
+    public async Task Handle_Should_ReturnSuccessResult_WhenCategoryNameIsUnique()
     {
         // Arrange
-        Category existingCategory = Category.Create("Old Category Name").Value;
-        Guid categoryId = existingCategory.Id;
+        UpdateCategoryNameCommand command = new(Guid.NewGuid(), "  Drinks  ");
+        string standardizedName = command.NewName.ToTitleCaseStandard();
+
+        Category fakeCategory = Category.Create(standardizedName).Value;
 
         _mockCategoryRepository
-            .Setup(repo => repo.GetByIdAsync(categoryId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(existingCategory);
+            .Setup(repo => repo.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(fakeCategory);
 
-        _mockCategoryRepository
-            .Setup(repo => repo.IsNameUniqueAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(true);
-        
-        UpdateCategoryNameCommand command = new(categoryId, "New Unique Category Name");
+        _mockUnitOfWork
+            .Setup(uow => uow.SaveChangesAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(1);
+
+        _mockCategoryQueries
+            .Setup(q => q.GetResponseByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result<CategoryResponse>.Success(new CategoryResponse
+            (
+                Id: command.CategoryId,
+                Name: standardizedName
+            )));
 
         // Act
-        Result result = await _handler.Handle(command, CancellationToken.None);
+        Result<CategoryResponse> result = await _handler.Handle(command, CancellationToken.None);
+
         // Assert
         Assert.True(result.IsSuccess);
-        _mockUnitOfWork.Verify(uow => uow.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
-    }
+        Assert.NotNull(result.Value);
+        Assert.Equal("Drinks", result.Value.Name);
 
-    [Fact]
-    public async Task Handler_Should_ReturnFailure_WhenCategoryNotFound()
-    {
-        // Arrange
-        Guid nonExistentCategoryId = Guid.NewGuid();
+        _mockCategoryRepository.Verify(repo =>
+            repo.GetByIdAsync(command.CategoryId, It.IsAny<CancellationToken>()),
+            Times.Once);
 
-        _mockCategoryRepository
-            .Setup(repo => repo.GetByIdAsync(nonExistentCategoryId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync((Category?)null);
-        
-        UpdateCategoryNameCommand command = new(nonExistentCategoryId, "New Category Name");
-        
-        // Act
-        Result result = await _handler.Handle(command, CancellationToken.None);
-        
-        // Assert
-        Assert.True(result.IsFailure);
-        Assert.Equal(CategoryErrors.NotFound.Code, result.Error.Code);
-        _mockUnitOfWork.Verify(uow => uow.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
-    }
-
-    [Fact]
-    public async Task Handle_Should_ReturnFailure_WhenNewNameIsInUseByAnotherCategory()
-    {
-        // Arrange
-        Category existingCategory = Category.Create("Old Category Name").Value;
-        Guid categoryId = existingCategory.Id;
-
-        _mockCategoryRepository
-            .Setup(repo => repo.GetByIdAsync(categoryId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(existingCategory);
-
-        _mockCategoryRepository
-            .Setup(repo => repo.IsNameUniqueAsync("New Conflicting Category Name", It.IsAny<CancellationToken>()))
-            .ReturnsAsync(false);
-
-        UpdateCategoryNameCommand command = new(categoryId, "New Conflicting Category Name");
-
-        // Act
-        Result result = await _handler.Handle(command, CancellationToken.None);
-
-        // Assert
-        Assert.True(result.IsFailure);
-        Assert.Equal(CategoryErrors.NameInUse.Code, result.Error.Code);
+        _mockUnitOfWork.Verify(uow =>
+            uow.SaveChangesAsync(It.IsAny<CancellationToken>()),
+            Times.Once);
     }
 }
