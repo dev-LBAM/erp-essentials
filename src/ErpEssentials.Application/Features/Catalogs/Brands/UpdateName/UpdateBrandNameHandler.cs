@@ -1,4 +1,6 @@
 ﻿
+using ErpEssentials.Application.Abstractions.Catalogs.Brands;
+using ErpEssentials.Application.Contracts.Catalogs.Brands;
 using ErpEssentials.Domain.Catalogs.Brands;
 using ErpEssentials.SharedKernel.Abstractions;
 using ErpEssentials.SharedKernel.Extensions;
@@ -7,34 +9,34 @@ using MediatR;
 
 namespace ErpEssentials.Application.Features.Catalogs.Brands.UpdateName;
 
-public class UpdateBrandNameHandler(IBrandRepository brandRepository, IUnitOfWork unitOfWork) : IRequestHandler<UpdateBrandNameCommand, Result>
+public class UpdateBrandNameHandler(
+    IBrandRepository brandRepository, 
+    IUnitOfWork unitOfWork,
+    IBrandQueries brandQueries) : IRequestHandler<UpdateBrandNameCommand, Result<BrandResponse>>
 {
     private readonly IBrandRepository _brandRepository = brandRepository;
+    private readonly IBrandQueries _brandQueries = brandQueries;
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
-    public async Task<Result> Handle(UpdateBrandNameCommand request, CancellationToken cancellationToken)
+    public async Task<Result<BrandResponse>> Handle(UpdateBrandNameCommand request, CancellationToken cancellationToken)
     {
         Brand? brand = await _brandRepository.GetByIdAsync(request.BrandId, cancellationToken);
         if (brand is null)
         {
-            return Result.Failure(BrandErrors.NotFound);
+            return Result<BrandResponse>.Failure(BrandErrors.NotFound);
         }
 
-        string standardizedName = request.NewName.ToTitleCaseStandard();
-
-        bool isNameUnique = await _brandRepository.IsNameUniqueAsync(standardizedName, cancellationToken);
-        if (!isNameUnique)
+        Result<Brand> updateBrandResult = brand.UpdateName(request.NewName);
+        if (updateBrandResult.IsFailure)
         {
-            return Result.Failure(BrandErrors.NameInUse);
+            return Result<BrandResponse>.Failure(updateBrandResult.Error);
+
         }
 
-        Result updateResult = brand.UpdateName(request.NewName);
-        if (updateResult.IsFailure)
-        {
-            return updateResult;
-        }
+        Brand newBrand = updateBrandResult.Value;
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
-        return Result.Success();
+        return await _brandQueries.GetResponseByIdAsync(newBrand.Id, cancellationToken);
+
     }
 }

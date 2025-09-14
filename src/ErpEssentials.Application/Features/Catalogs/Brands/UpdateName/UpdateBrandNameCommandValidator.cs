@@ -1,12 +1,16 @@
 ﻿using ErpEssentials.Domain.Catalogs.Brands;
+using ErpEssentials.Domain.Catalogs.Categories;
 using FluentValidation;
 
 namespace ErpEssentials.Application.Features.Catalogs.Brands.UpdateName;
 
 public class UpdateBrandNameCommandValidator : AbstractValidator<UpdateBrandNameCommand>
 {
-    public UpdateBrandNameCommandValidator()
+    private readonly IBrandRepository _brandRepository;
+    public UpdateBrandNameCommandValidator(IBrandRepository brandRepository)
     {
+        _brandRepository = brandRepository;
+
         RuleFor(x => x.BrandId)
         .NotEmpty()
         .WithErrorCode(BrandErrors.EmptyId.Code)
@@ -14,10 +18,20 @@ public class UpdateBrandNameCommandValidator : AbstractValidator<UpdateBrandName
 
         RuleFor(x => x.NewName)
             .NotEmpty()
-            .WithErrorCode(BrandErrors.EmptyName.Code)
-            .WithMessage(BrandErrors.EmptyName.Message)
-            .Matches("^[a-zA-Z0-9- ]*$")
-            .WithErrorCode(BrandErrors.InvalidNameFormat.Code)
-            .WithMessage(BrandErrors.InvalidNameFormat.Message);
+                .WithErrorCode(BrandErrors.EmptyName.Code)
+                .WithMessage(BrandErrors.EmptyName.Message)
+            .MaximumLength(100)
+                .WithErrorCode(BrandErrors.NameTooLong.Code)
+                .WithMessage(BrandErrors.NameTooLong.Message)
+            .Matches("^[a-zA-ZÀ-ÿ\\s'-]+$")
+                .WithErrorCode(BrandErrors.InvalidNameFormat.Code)
+                .WithMessage(BrandErrors.InvalidNameFormat.Message)
+            .MustAsync(BeUniqueName)
+                .WithErrorCode(BrandErrors.NameInUse.Code)
+                .WithMessage(BrandErrors.NameInUse.Message);
+    }
+    private async Task<bool> BeUniqueName(string newName, CancellationToken cancellationToken)
+    {
+        return await _brandRepository.IsNameUniqueAsync(newName, cancellationToken);
     }
 }

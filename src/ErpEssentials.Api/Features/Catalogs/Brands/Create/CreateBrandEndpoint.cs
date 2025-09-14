@@ -16,14 +16,13 @@ public class CreateBrandEndpoint(ISender sender) : EndpointBaseAsync
     private readonly ISender _sender = sender;
 
     [HttpPost("/api/brands", Name = BrandRoutes.Create)]
+    [ProducesResponseType(typeof(BrandResponse), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ValidationError), StatusCodes.Status400BadRequest)]
     public override async Task<ActionResult<Brand>> HandleAsync([FromBody] CreateBrandRequest request, CancellationToken cancellationToken = default)
     {
-        CreateBrandCommand command = new()
-        {
-            Name = request.Name,
-        };
+        CreateBrandCommand command = new( Name: request.Name );
 
-        Result<Brand> result = await _sender.Send(command, cancellationToken);
+        Result<BrandResponse> result = await _sender.Send(command, cancellationToken);
 
         if (result.IsFailure)
         {

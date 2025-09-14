@@ -28,16 +28,16 @@ public class Brand
         return Result<Brand>.Success(brand);
     }
 
-    public Result UpdateName(string newName)
+    public Result<Brand> UpdateName(string newName)
     {
         string standardizedName = newName.ToTitleCaseStandard();
 
         if (string.IsNullOrWhiteSpace(standardizedName))
         {
-            return Result.Failure(BrandErrors.EmptyName);
+            return Result<Brand>.Failure(BrandErrors.EmptyName);
         }
 
         Name = standardizedName;
-        return Result.Success();
+        return Result<Brand>.Success(this);
     }
 }
