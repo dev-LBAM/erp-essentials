@@ -3,6 +3,7 @@ using FluentValidation;
 using MediatR;
 using System.Reflection;
 using FluentValidation.Results;
+using System.Linq;
 
 namespace ErpEssentials.Application.Behaviors;
 
@@ -54,7 +55,15 @@ public class ValidationBehavior<TRequest, TResponse>(IEnumerable<IValidator<TReq
             // This builds the structured "tree of errors" that is very useful for the front-end.
             Dictionary<string, string[]> errorsDictionary = validationFailures
                 .GroupBy(x => x.PropertyName)
-                .ToDictionary(g => g.Key, g => g.Select(vf => vf.ErrorMessage).ToArray());
+                .ToDictionary(
+                    // Replace this line:
+                    // g => char.ToLowerInvariant(g.Key[0]) + g.Key.Substring(1), // convert to camelCase
+
+                    // With this simplified version:
+                    g => string.Concat(char.ToLowerInvariant(g.Key[0]), g.Key[1..]), // convert to camelCase
+                    g => g.Select(vf => vf.ErrorMessage).ToArray()
+                );
+
 
             // We create our specialized error object, 'ValidationError',
             // which carries this dictionary of errors.
