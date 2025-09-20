@@ -4,7 +4,6 @@ using ErpEssentials.Domain.Products.Data;
 using ErpEssentials.Domain.Products.Lots;
 using ErpEssentials.SharedKernel.Extensions;
 using ErpEssentials.SharedKernel.ResultPattern;
-using System.Xml.Linq;
 
 namespace ErpEssentials.Domain.Products;
 
@@ -102,7 +101,33 @@ public class Product
         return Result<Product>.Success(this);
     }
 
-
+    public Result<Product> UpdateFinancials(UpdateProductFinancialsData productFinancialsData)
+    {
+        List<Error> errors = [];
+        if (productFinancialsData.NewPrice.HasValue && productFinancialsData.NewPrice <= 0)
+        {
+            errors.Add(ProductErrors.NonPositivePrice);
+        }
+        if (productFinancialsData.NewCost.HasValue && productFinancialsData.NewCost < 0)
+        {
+            errors.Add(ProductErrors.NonNegativeCost);
+        }
+        if (errors.Count != 0)
+        {
+            Dictionary<string, string[]> errorsDictionary = errors.ToDictionary(e => e.Code.Split('.').Last(), e => new[] { e.Message });
+            return Result<Product>.Failure(new ValidationError(errorsDictionary));
+        }
+        if (productFinancialsData.NewPrice.HasValue)
+        {
+            Price = productFinancialsData.NewPrice.Value;
+        }
+        if (productFinancialsData.NewCost.HasValue)
+        {
+            Cost = productFinancialsData.NewCost.Value;
+        }
+        UpdatedAt = DateTime.UtcNow;
+        return Result<Product>.Success(this);
+    }
 
     public int GetTotalStock() => _lots.Sum(l => l.Quantity);
 

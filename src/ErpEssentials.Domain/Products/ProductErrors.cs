@@ -10,6 +10,7 @@ public static class ProductErrors
     public static readonly Error EmptyId = new DomainError("Product.EmptyId", "The product id cannot be empty.", ErrorType.Validation);
     public static readonly Error EmptyBrandId = new DomainError("Product.EmptyBrandId", "The product BrandId cannot be empty.", ErrorType.Validation);
     public static readonly Error EmptyCategoryId = new DomainError("Product.EmptyCategoryId", "The product CategoryId cannot be empty.", ErrorType.Validation);
+    public static readonly Error EmptyFinancialUpdate = new DomainError("Product.EmptyFinancialUpdate", "At least one financial field (Price or Cost) must be provided for update.", ErrorType.Validation);
 
     public static readonly Error NameTooLong = new DomainError("Product.NameTooLong", "The product name cannot exceed 100 characters.", ErrorType.Validation);
     public static readonly Error DescriptionTooLong = new DomainError("Product.DescriptionTooLong", "The product description cannot exceed 500 characters.", ErrorType.Validation);
