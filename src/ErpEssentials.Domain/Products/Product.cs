@@ -129,6 +129,34 @@ public class Product
         return Result<Product>.Success(this);
     }
 
+    public Result<Product> UpdateClassification(UpdateProductClassificationData classificationData)
+    {
+        List<Error> errors = [];
+        if (classificationData.NewBrandId.HasValue && classificationData.NewBrandId == Guid.Empty)
+        {
+            errors.Add(ProductErrors.EmptyBrandId);
+        }
+        if (classificationData.NewCategoryId.HasValue && classificationData.NewCategoryId == Guid.Empty)
+        {
+            errors.Add(ProductErrors.EmptyCategoryId);
+        }
+        if (errors.Count != 0)
+        {
+            Dictionary<string, string[]> errorsDictionary = errors.ToDictionary(e => e.Code.Split('.').Last(), e => new[] { e.Message });
+            return Result<Product>.Failure(new ValidationError(errorsDictionary));
+        }
+        if (classificationData.NewBrandId.HasValue)
+        {
+            BrandId = classificationData.NewBrandId.Value;
+        }
+        if (classificationData.NewCategoryId.HasValue)
+        {
+            CategoryId = classificationData.NewCategoryId.Value;
+        }
+        UpdatedAt = DateTime.UtcNow;
+        return Result<Product>.Success(this);
+    }
+
     public int GetTotalStock() => _lots.Sum(l => l.Quantity);
 
     public Result ReceiveStock(CreateLotData lotData)
