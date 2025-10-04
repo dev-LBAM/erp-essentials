@@ -8,4 +8,5 @@ public static class ProductRoutes
     public const string UpdateFinancials = "Products.UpdateFinancials";
     public const string UpdateClassification = "Products.UpdateClassification";
     public const string Deactivate = "Products.Deactivate";
+    public const string Activate = "Products.Activate";
 }

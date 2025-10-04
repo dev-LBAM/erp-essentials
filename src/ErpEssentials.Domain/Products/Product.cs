@@ -173,8 +173,6 @@ public class Product
         return Result<Product>.Success(this);
     }
 
-
-
     public int GetTotalStock() => _lots.Sum(l => l.Quantity);
 
     public Result ReceiveStock(CreateLotData lotData)
