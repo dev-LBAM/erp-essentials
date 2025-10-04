@@ -15,7 +15,7 @@ public class GetBrandByIdEndpoint(ISender sender) : EndpointBaseAsync
 
     public readonly ISender _sender = sender;
 
-    [HttpPatch("/api/brands/{id:guid}", Name = BrandRoutes.GetById)]
+    [HttpGet("/api/brands/{id:guid}", Name = BrandRoutes.GetById)]
     public override async Task<ActionResult<BrandResponse>> HandleAsync([FromRoute] Guid id, CancellationToken cancellationToken = default)
     {
         GetBrandByIdQuery query = new(id);

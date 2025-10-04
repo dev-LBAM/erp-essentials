@@ -11,7 +11,7 @@ namespace ErpEssentials.Api.Features.Catalogs.Categories.UpdateName;
 public class UpdateCategoryNameEndpoint(ISender sender) : EndpointBase
 {
     private readonly ISender _sender = sender;
-    [HttpPut("/api/categories/{id:guid}", Name = CategoryRoutes.UpdateName)]
+    [HttpPatch("/api/categories/{id:guid}", Name = CategoryRoutes.UpdateName)]
     [ProducesResponseType(typeof(CategoryResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationError), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(Error), StatusCodes.Status404NotFound)]

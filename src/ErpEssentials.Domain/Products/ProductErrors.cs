@@ -10,8 +10,9 @@ public static class ProductErrors
     public static readonly Error EmptyId = new DomainError("Product.EmptyId", "The product id cannot be empty.", ErrorType.Validation);
     public static readonly Error EmptyBrandId = new DomainError("Product.EmptyBrandId", "The product BrandId cannot be empty.", ErrorType.Validation);
     public static readonly Error EmptyCategoryId = new DomainError("Product.EmptyCategoryId", "The product CategoryId cannot be empty.", ErrorType.Validation);
-    public static readonly Error EmptyFinancialUpdate = new DomainError("Product.EmptyFinancialUpdate", "At least one financial field (NewPrice or NewCost) must be provided for update.", ErrorType.Validation);
-    public static readonly Error EmptyClassificationUpdate = new DomainError("Product.EmptyClassificationUpdate", "At least one classification field (NewBrandId or NewCategoryId) must be provided for update.", ErrorType.Validation);
+    public static readonly Error EmptyFinancialUpdate = new DomainError("Product.EmptyFinancialUpdate", "At least one financial field (NewPrice or NewCost) must be provided to update the product.", ErrorType.Validation);
+    public static readonly Error EmptyClassificationUpdate = new DomainError("Product.EmptyClassificationUpdate", "At least one classification field (NewBrandId or NewCategoryId) must be provided to update the product.", ErrorType.Validation);
+    public static readonly Error EmptyDetailUpdate = new DomainError("Product.EmptyUpdate","At least one detail field (NewName, NewDescription or NewBarcode) must be provided to update the product.",ErrorType.Validation);
 
 
     public static readonly Error NameTooLong = new DomainError("Product.NameTooLong", "The product name cannot exceed 100 characters.", ErrorType.Validation);

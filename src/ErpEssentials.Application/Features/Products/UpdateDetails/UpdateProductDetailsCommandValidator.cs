@@ -15,6 +15,13 @@ public class UpdateProductDetailsCommandValidator : AbstractValidator<UpdateProd
                 .WithErrorCode(ProductErrors.EmptyId.Code)
                 .WithMessage(ProductErrors.EmptyId.Message);
 
+        RuleFor(x => x)
+            .Must(x => x.NewName != null
+                || !string.IsNullOrWhiteSpace(x.NewBarcode)
+                || !string.IsNullOrWhiteSpace(x.NewDescription))
+            .WithErrorCode(ProductErrors.EmptyDetailUpdate.Code)
+            .WithMessage(ProductErrors.EmptyDetailUpdate.Message);
+
         When(x => x.NewName is not null, () =>
         {
             RuleFor(x => x.NewName)
@@ -24,7 +31,7 @@ public class UpdateProductDetailsCommandValidator : AbstractValidator<UpdateProd
                 .MaximumLength(100)
                     .WithErrorCode(ProductErrors.NameTooLong.Code)
                     .WithMessage(ProductErrors.NameTooLong.Message)
-                .Matches("^[a-zA-Z0-9À-ÿ\\s\\-/()']+$")
+                .Matches("^[a-zA-Z0-9À-ÿ\\s\\-/()']*$")
                     .WithErrorCode(ProductErrors.InvalidNameFormat.Code)
                     .WithMessage(ProductErrors.InvalidNameFormat.Message);
         });

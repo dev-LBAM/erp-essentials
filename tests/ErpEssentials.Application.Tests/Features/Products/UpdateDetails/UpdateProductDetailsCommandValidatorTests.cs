@@ -40,7 +40,8 @@ public class UpdateProductDetailsCommandValidatorTests
         TestValidationResult<UpdateProductDetailsCommand> result = await _validator.TestValidateAsync(command);
 
         // Assert
-        result.ShouldNotHaveAnyValidationErrors();
+        result.ShouldHaveValidationErrorFor(x => x)
+            .WithErrorCode(ProductErrors.EmptyDetailUpdate.Code);
     }
 
 

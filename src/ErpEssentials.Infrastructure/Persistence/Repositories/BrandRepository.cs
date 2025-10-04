@@ -1,4 +1,6 @@
 ﻿using ErpEssentials.Domain.Catalogs.Brands;
+using ErpEssentials.SharedKernel.Extensions;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace ErpEssentials.Infrastructure.Persistence.Repositories;
@@ -19,6 +21,7 @@ public class BrandRepository(AppDbContext context) : IBrandRepository
 
     public async Task<bool> IsNameUniqueAsync(string name, CancellationToken cancellationToken = default)
     {
-        return !await _context.Brands.AnyAsync(b => b.Name == name, cancellationToken);
+        string standardizedName = name.ToTitleCaseStandard();
+        return !await _context.Brands.AnyAsync(b => b.Name == standardizedName, cancellationToken);
     }
 }

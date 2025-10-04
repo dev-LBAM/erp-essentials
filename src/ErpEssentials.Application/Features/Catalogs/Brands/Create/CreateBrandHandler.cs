@@ -19,15 +19,7 @@ public class CreateBrandHandler(
 
     public async Task<Result<BrandResponse>> Handle(CreateBrandCommand request, CancellationToken cancellationToken)
     {
-        string standardizedName = request.Name.ToTitleCaseStandard();
-
-        bool isNameUnique = await _brandRepository.IsNameUniqueAsync(standardizedName, cancellationToken);
-        if (!isNameUnique)
-        {
-            return Result<BrandResponse>.Failure(BrandErrors.NameInUse);
-        }
-
-        Result<Brand> brandResult = Brand.Create(standardizedName);
+        Result<Brand> brandResult = Brand.Create(request.Name);
         if (brandResult.IsFailure)
         {
             return Result<BrandResponse>.Failure(brandResult.Error);
