@@ -1,6 +1,9 @@
-﻿using ErpEssentials.Application.Abstractions.Products;
+﻿
+
+using ErpEssentials.Application.Abstractions.Products;
 using ErpEssentials.Application.Contracts.Products;
-using ErpEssentials.Application.Features.Products.UpdateDetails;
+using ErpEssentials.Application.Features.Products.Deactivate;
+using ErpEssentials.Application.Features.Products.UpdateClassification;
 using ErpEssentials.Domain.Catalogs.Brands;
 using ErpEssentials.Domain.Catalogs.Categories;
 using ErpEssentials.Domain.Products;
@@ -9,34 +12,42 @@ using ErpEssentials.SharedKernel.Abstractions;
 using ErpEssentials.SharedKernel.ResultPattern;
 using Moq;
 
-namespace ErpEssentials.Application.Tests.Features.Products.UpdateDetails;
+namespace ErpEssentials.Application.Tests.Features.Products.Deactivate;
 
-public class UpdateProductDetailsHandlerTests
+public class DeactivateProductHandlerTests
 {
     private readonly Mock<IProductRepository> _mockProductRepository;
     private readonly Mock<IUnitOfWork> _mockUnitOfWork;
     private readonly Mock<IProductQueries> _mockProductQueries;
-    private readonly UpdateProductDetailsHandler _handler;
+    private readonly DeactivateProductHandler _handler;
 
     private static Product CreateTestProduct()
     {
         Brand brand = Brand.Create("Test Brand").Value;
         Category category = Category.Create("Test Category").Value;
-        CreateProductData initialData = new("SKU", "Old Name", "Old Desc", "Old Barcode", 100, 50, brand.Id, category.Id);
+        CreateProductData initialData = new(
+            Sku: "SKU",
+            Name: "Old Name",
+            Description: "Old Desc",
+            Barcode: "Old Barcode",
+            Price: 100m,
+            Cost: 50m,
+            BrandId: brand.Id,
+            CategoryId: category.Id
+        );
         Product product = Product.Create(initialData).Value;
 
         typeof(Product).GetProperty(nameof(Product.Brand))?.SetValue(product, brand, null);
         typeof(Product).GetProperty(nameof(Product.Category))?.SetValue(product, category, null);
         return product;
     }
-
-    public UpdateProductDetailsHandlerTests()
+    public DeactivateProductHandlerTests()
     {
         _mockProductRepository = new Mock<IProductRepository>();
         _mockUnitOfWork = new Mock<IUnitOfWork>();
         _mockProductQueries = new Mock<IProductQueries>();
-        _handler = new UpdateProductDetailsHandler(
-            _mockProductRepository.Object, 
+        _handler = new DeactivateProductHandler(
+            _mockProductRepository.Object,
             _mockUnitOfWork.Object,
             _mockProductQueries.Object);
     }
@@ -45,7 +56,8 @@ public class UpdateProductDetailsHandlerTests
     public async Task Handle_Should_ReturnFailure_WhenProductIsNotFound()
     {
         // Arrange
-        UpdateProductDetailsCommand command = new(Guid.NewGuid(), "New Name", null, null);
+        DeactivateProductCommand command = new(Guid.NewGuid());
+
         _mockProductRepository
             .Setup(repo => repo.GetByIdAsync(command.ProductId, It.IsAny<CancellationToken>()))
             .ReturnsAsync((Product?)null);
@@ -59,67 +71,58 @@ public class UpdateProductDetailsHandlerTests
     }
 
     [Fact]
-    public async Task Handle_Should_ReturnFailure_WhenDomainUpdateFails()
+    public async Task Handle_Should_ReturnFailure_WhenProductIsAlreadyInactive()
     {
         // Arrange
         Product product = CreateTestProduct();
-        UpdateProductDetailsCommand command = new(product.Id, "", null, null);
-
+        typeof(Product).GetProperty(nameof(Product.IsActive))?.SetValue(product, false, null);
+        DeactivateProductCommand command = new(product.Id);
         _mockProductRepository
             .Setup(repo => repo.GetByIdAsync(command.ProductId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(product);
-
         // Act
         Result<ProductResponse> result = await _handler.Handle(command, CancellationToken.None);
-
         // Assert
         Assert.True(result.IsFailure);
-        Assert.Equal(ProductErrors.EmptyName.Code, result.Error.Code);
-        _mockUnitOfWork.Verify(uow => uow.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
+        Assert.Equal(ProductErrors.AlreadyInactive.Code, result.Error.Code);
     }
 
     [Fact]
-    public async Task Handle_Should_ReturnSuccess_And_MapToResponse_WhenUpdateIsValid()
+    public async Task Handle_Should_DeactivateProductSuccessfully()
     {
         // Arrange
         Product product = CreateTestProduct();
-        UpdateProductDetailsCommand command = new(product.Id, "New Name", "New Desc", "New Barcode");
-        ProductResponse dummyResponse = new(
-            Id: Guid.NewGuid(),
-            Sku: product.Sku,
-            Name: command.NewName!,
-            Description: command.NewDescription,
-            Barcode: command.NewBarcode,
-            Price: product.Price,
-            Cost: product.Cost,
-            BrandName: "Test Brand",
-            CategoryName: "Test Category",
-            CreatedAt: DateTime.UtcNow,
-            UpdatedAt: null,
-            TotalStock: 0,
-            IsActive: product.IsActive
-        );
+        DeactivateProductCommand command = new(product.Id);
         _mockProductRepository
-            .Setup(repo => repo.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+            .Setup(repo => repo.GetByIdAsync(product.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(product);
 
         _mockProductQueries
-            .Setup(queries => queries.GetResponseByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(Result<ProductResponse>.Success(dummyResponse));
+            .Setup(q => q.GetResponseByIdAsync(product.Id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result<ProductResponse>.Success(new ProductResponse(
+                product.Id,
+                product.Sku,
+                product.Name,
+                product.Description,
+                product.Barcode,
+                product.Price,
+                product.Cost,
+                BrandName: "New Brand",
+                CategoryName: "New Category",
+                CreatedAt: product.CreatedAt,
+                UpdatedAt: DateTime.UtcNow,
+                TotalStock: 0,
+                IsActive: false
+            )));
 
         // Act
         Result<ProductResponse> result = await _handler.Handle(command, CancellationToken.None);
-
+        
         // Assert
         Assert.True(result.IsSuccess);
         Assert.NotNull(result.Value);
-
-        ProductResponse response = result.Value;
-        Assert.Equal(dummyResponse.Name, response.Name);
-        Assert.Equal(dummyResponse.Description, response.Description);
-        Assert.Equal(dummyResponse.Barcode, response.Barcode);
-        Assert.Equal(dummyResponse.BrandName, response.BrandName);
-
         _mockUnitOfWork.Verify(uow => uow.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
 }
+
+

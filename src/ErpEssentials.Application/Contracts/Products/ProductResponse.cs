@@ -12,5 +12,6 @@ public record ProductResponse(
     string CategoryName,
     DateTime CreatedAt,
     DateTime? UpdatedAt,
-    int TotalStock
+    int TotalStock,
+    bool IsActive
 );

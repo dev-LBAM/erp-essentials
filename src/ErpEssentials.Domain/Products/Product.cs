@@ -157,6 +157,24 @@ public class Product
         return Result<Product>.Success(this);
     }
 
+    public Result<Product> Deactivate()
+    {
+        if (!IsActive) return Result<Product>.Failure(ProductErrors.AlreadyInactive);
+        IsActive = false;
+        UpdatedAt = DateTime.UtcNow;
+        return Result<Product>.Success(this);
+    }
+
+    public Result<Product> Activate()
+    {
+        if (IsActive) return Result<Product>.Failure(ProductErrors.AlreadyActive);
+        IsActive = true;
+        UpdatedAt = DateTime.UtcNow;
+        return Result<Product>.Success(this);
+    }
+
+
+
     public int GetTotalStock() => _lots.Sum(l => l.Quantity);
 
     public Result ReceiveStock(CreateLotData lotData)

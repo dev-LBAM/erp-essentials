@@ -120,7 +120,8 @@ public class UpdateProductClassificationHandlerTests
                 CategoryName: "New Category",
                 CreatedAt: product.CreatedAt,
                 UpdatedAt: DateTime.UtcNow,
-                TotalStock: 0
+                TotalStock: 0,
+                IsActive: product.IsActive
             )));
 
         // Act

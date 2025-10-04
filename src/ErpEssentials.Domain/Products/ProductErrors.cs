@@ -23,6 +23,9 @@ public static class ProductErrors
     public static readonly Error NonNegativeCost = new DomainError("Product.NonNegativeCost", "The product cost cannot be negative.", ErrorType.Validation);
     public static readonly Error InvalidNameFormat = new DomainError("Product.InvalidNameFormat", "The product name contains invalid characters.", ErrorType.Validation);
 
+    public static readonly Error AlreadyInactive = new DomainError("Product.AlreadyInactive", "The product already inactive.", ErrorType.Validation);
+    public static readonly Error AlreadyActive = new DomainError("Product.AlreadyActive", "The product already active.", ErrorType.Validation);
+
     // Business Rule Errors
     public static readonly Error InvalidStockQuantity = new DomainError("Product.InvalidStockQuantity", "Stock quantity must be positive.", ErrorType.Validation);
     public static readonly Error InsufficientStock = new DomainError("Product.InsufficientStock", "There is not enough stock to fulfill the request.", ErrorType.Conflict);

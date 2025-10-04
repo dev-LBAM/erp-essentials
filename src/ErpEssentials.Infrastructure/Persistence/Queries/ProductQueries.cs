@@ -29,7 +29,8 @@ public class ProductQueries(AppDbContext context) : IProductQueries
             p.Category != null ? p.Category.Name : string.Empty,
             p.CreatedAt,
             p.UpdatedAt ?? p.CreatedAt,
-            p.Lots.Sum(l => (int?)l.Quantity) ?? 0
+            p.Lots.Sum(l => (int?)l.Quantity) ?? 0,
+            p.IsActive
         ))
         .FirstOrDefaultAsync(cancellationToken);
 

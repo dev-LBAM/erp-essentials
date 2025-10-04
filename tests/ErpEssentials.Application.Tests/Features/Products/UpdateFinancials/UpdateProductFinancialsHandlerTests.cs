@@ -98,7 +98,8 @@ public class UpdateProductFinancialsHandlerTests
             CategoryName: "Test Category",
             CreatedAt: DateTime.UtcNow,
             UpdatedAt: null,
-            TotalStock: 0
+            TotalStock: 0,
+            IsActive: product.IsActive
         );
         _mockProductRepository
             .Setup(repo => repo.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))

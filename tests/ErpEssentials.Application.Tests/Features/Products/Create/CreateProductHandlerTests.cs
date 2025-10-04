@@ -64,7 +64,8 @@ public class CreateProductHandlerTests
             CategoryName: "Test Category",
             CreatedAt: DateTime.UtcNow,
             UpdatedAt: null,
-            TotalStock: 0
+            TotalStock: 0,
+            IsActive: true
         );
         _mockProductQueries
             .Setup(queries => queries.GetResponseByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
