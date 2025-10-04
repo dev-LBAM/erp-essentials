@@ -13,7 +13,7 @@ public class UpdateBrandNameEndpoint(ISender sender) : EndpointBase
 {
     private readonly ISender _sender = sender;
 
-    [HttpPut("/api/brands/{id:guid}", Name = BrandRoutes.UpdateName)]
+    [HttpPatch("/api/brands/{id:guid}", Name = BrandRoutes.UpdateName)]
     [ProducesResponseType(typeof(BrandResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationError), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(Error), StatusCodes.Status404NotFound)]

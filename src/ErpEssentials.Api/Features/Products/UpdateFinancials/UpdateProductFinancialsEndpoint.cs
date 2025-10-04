@@ -11,7 +11,7 @@ namespace ErpEssentials.Api.Features.Products.UpdateFinancials;
 public class UpdateProductFinancialsEndpoint(ISender Sender) : EndpointBase
 {
     private readonly ISender _sender = Sender;
-    [HttpPut("/api/products/{id:guid}/financials", Name = ProductRoutes.UpdateFinancials)]
+    [HttpPatch("/api/products/{id:guid}/financials", Name = ProductRoutes.UpdateFinancials)]
     [ProducesResponseType(typeof(ProductResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationError), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(Error), StatusCodes.Status404NotFound)]
