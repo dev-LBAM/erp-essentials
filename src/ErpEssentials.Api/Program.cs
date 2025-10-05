@@ -2,10 +2,12 @@ using ErpEssentials.Application;
 using ErpEssentials.Application.Abstractions.Catalogs.Brands;
 using ErpEssentials.Application.Abstractions.Catalogs.Categories;
 using ErpEssentials.Application.Abstractions.Products;
+using ErpEssentials.Application.Abstractions.Products.Lots;
 using ErpEssentials.Application.Behaviors;
 using ErpEssentials.Domain.Catalogs.Brands;
 using ErpEssentials.Domain.Catalogs.Categories;
 using ErpEssentials.Domain.Products;
+using ErpEssentials.Domain.Products.Lots;
 using ErpEssentials.Infrastructure.Persistence;
 using ErpEssentials.Infrastructure.Persistence.Queries;
 using ErpEssentials.Infrastructure.Persistence.Repositories;
@@ -38,9 +40,13 @@ builder.Services.AddMediatR(cfg =>
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IBrandRepository, BrandRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<ILotRepository, LotRepository>();
+
 builder.Services.AddScoped<IProductQueries, ProductQueries>();
 builder.Services.AddScoped<IBrandQueries, BrandQueries>();
 builder.Services.AddScoped<ICategoryQueries, CategoryQueries>();
+builder.Services.AddScoped<ILotQueries, LotQueries>();
+
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 // FluentValidation

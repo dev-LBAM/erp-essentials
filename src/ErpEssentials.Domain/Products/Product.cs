@@ -175,17 +175,15 @@ public class Product
 
     public int GetTotalStock() => _lots.Sum(l => l.Quantity);
 
-    public Result ReceiveStock(CreateLotData lotData)
+    public Result<Lot> ReceiveStock(CreateLotData lotData)
     {
-        Result<Lot> lotResult = Lot.Create(Id, lotData);
-        if (lotResult.IsFailure)
-        {
-            return Result.Failure(lotResult.Error);
-        }
+        var lotResult = Lot.Create(Id, lotData);
+        if (lotResult.IsFailure) return Result<Lot>.Failure(lotResult.Error);
+
         _lots.Add(lotResult.Value);
-        UpdatedAt = DateTime.UtcNow;
-        return Result.Success();
+        return Result<Lot>.Success(lotResult.Value);
     }
+
 
     public Result RemoveStock(int quantityToRemove)
     {
