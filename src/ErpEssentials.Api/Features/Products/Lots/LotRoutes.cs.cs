@@ -3,5 +3,6 @@
 public static class LotRoutes
 {
     public const string ReceiveStock = "Lots.ReceiveStock";
+    public const string RemoveStock = "Lots.RemoveStock";
     public const string GetById = "Lots.GetById";
 }

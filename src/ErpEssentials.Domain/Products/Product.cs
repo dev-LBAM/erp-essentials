@@ -185,27 +185,36 @@ public class Product
     }
 
 
-    public Result RemoveStock(int quantityToRemove)
+    public Result<List<Lot>> RemoveStock(int quantityToRemove)
     {
-        if (quantityToRemove <= 0) return Result.Failure(ProductErrors.InvalidStockQuantity);
-        if (GetTotalStock() < quantityToRemove) return Result.Failure(ProductErrors.InsufficientStock);
+        if (quantityToRemove <= 0)
+            return Result<List<Lot>>.Failure(ProductErrors.InvalidStockQuantity);
+
+        if (GetTotalStock() < quantityToRemove)
+            return Result<List<Lot>>.Failure(ProductErrors.InsufficientStock);
 
         int quantityLeft = quantityToRemove;
-        List<Lot> lotsToRemove = [];
+        List<Lot> affectedLots = [];
 
-        foreach (Lot lot in _lots.OrderBy(l => l.ExpirationDate ?? l.CreatedAt))
+        foreach (var lot in _lots.OrderBy(l => l.ExpirationDate ?? l.CreatedAt))
         {
             if (quantityLeft == 0) break;
+
             int removable = Math.Min(lot.Quantity, quantityLeft);
             lot.RemoveQuantity(removable);
             quantityLeft -= removable;
-            if (lot.Quantity == 0) lotsToRemove.Add(lot);
+
+            affectedLots.Add(lot);
+
+            if (lot.Quantity == 0)
+                _lots.Remove(lot);
         }
 
-        lotsToRemove.ForEach(l => _lots.Remove(l));
         UpdatedAt = DateTime.UtcNow;
-        return Result.Success();
+
+        return Result<List<Lot>>.Success(affectedLots);
     }
+
 
     public Result AddQuantityToLot(Guid lotId, int quantityToAdd)
     {
