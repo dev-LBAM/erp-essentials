@@ -137,13 +137,13 @@ public class ProductTests
         }
 
         [Fact]
-        public void RemoveFromSpecificLot_Should_Fail_WhenLotIsNotFound()
+        public void RemoveQuantityFromLot_Should_Fail_WhenLotIsNotFound()
         {
             // Arrange
             Guid nonExistentLotId = Guid.NewGuid();
 
             // Act
-            Result result = _product.RemoveFromSpecificLot(nonExistentLotId, 5);
+            Result result = _product.RemoveQuantityFromLot(nonExistentLotId, 5);
 
             // Assert
             Assert.True(result.IsFailure);
@@ -183,7 +183,7 @@ public class ProductTests
         }
 
         [Fact]
-        public void RemoveFromSpecificLot_Should_Succeed_WhenLotHasSufficientStock()
+        public void RemoveQuantityFromLot_Should_Succeed_WhenLotHasSufficientStock()
         {
             // Arrange
             _product.ReceiveStock(new CreateLotData(20, 50m, null));
@@ -191,7 +191,7 @@ public class ProductTests
             int quantityToRemove = 5;
 
             // Act
-            Result result = _product.RemoveFromSpecificLot(lotId, quantityToRemove);
+            Result result = _product.RemoveQuantityFromLot(lotId, quantityToRemove);
 
             // Assert
             Assert.True(result.IsSuccess);
@@ -200,7 +200,7 @@ public class ProductTests
         }
 
         [Fact]
-        public void RemoveFromSpecificLot_Should_Fail_WhenStockInLotIsInsufficient()
+        public void RemoveQuantityFromLot_Should_Fail_WhenStockInLotIsInsufficient()
         {
             // Arrange
             _product.ReceiveStock(new CreateLotData(10, 50m, null));
@@ -208,7 +208,7 @@ public class ProductTests
             int quantityToRemove = 15;
 
             // Act
-            Result result = _product.RemoveFromSpecificLot(lotId, quantityToRemove);
+            Result result = _product.RemoveQuantityFromLot(lotId, quantityToRemove);
 
             // Assert
             Assert.True(result.IsFailure);
@@ -218,7 +218,7 @@ public class ProductTests
         }
 
         [Fact]
-        public void RemoveFromSpecificLot_Should_RemoveLot_WhenQuantityReachesZero()
+        public void RemoveQuantityFromLot_Should_RemoveLot_WhenQuantityReachesZero()
         {
             // Arrange
             _product.ReceiveStock(new CreateLotData(10, 50m, null));
@@ -226,7 +226,7 @@ public class ProductTests
             int quantityToRemove = 10;
 
             // Act
-            Result result = _product.RemoveFromSpecificLot(lotId, quantityToRemove);
+            Result result = _product.RemoveQuantityFromLot(lotId, quantityToRemove);
 
             // Assert
             Assert.True(result.IsSuccess);
