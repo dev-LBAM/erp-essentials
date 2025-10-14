@@ -13,14 +13,15 @@ public class UpdateBrandNameEndpoint(ISender sender) : EndpointBase
 {
     private readonly ISender _sender = sender;
 
-    [HttpPatch("/api/brands/{id:guid}", Name = BrandRoutes.UpdateName)]
+    [HttpPatch("/api/brands/{brandId:guid}", Name = BrandRoutes.UpdateName)]
+    [ApiExplorerSettings(GroupName = "Inventory / Brands")]
     [ProducesResponseType(typeof(BrandResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationError), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(Error), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult> HandleAsync([FromRoute] Guid id,[FromBody] UpdateBrandNameRequest request,CancellationToken cancellationToken = default)
+    public async Task<ActionResult> HandleAsync([FromRoute] Guid brandId, [FromBody] UpdateBrandNameRequest request,CancellationToken cancellationToken = default)
     {
 
-        UpdateBrandNameCommand command = new(id, request.NewName);
+        UpdateBrandNameCommand command = new(brandId, request.NewName);
 
         Result<BrandResponse> result = await _sender.Send(command, cancellationToken);
 

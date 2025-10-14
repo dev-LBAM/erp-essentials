@@ -11,13 +11,14 @@ namespace ErpEssentials.Api.Features.Products.Activate;
 public class ActivateProductEndpoint(ISender sender) : EndpointBase
 {
     private readonly ISender _sender = sender;
-    [HttpPatch("/api/products/{id:guid}/activate", Name = ProductRoutes.Activate)]
+    [HttpPatch("/api/products/{productId:guid}/activate", Name = ProductRoutes.Activate)]
+    [ApiExplorerSettings(GroupName = "Inventory / Products")]
     [ProducesResponseType(typeof(ProductResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationError), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(Error), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult> HandleAsync([FromRoute] Guid id, CancellationToken cancellationToken = default)
+    public async Task<ActionResult> HandleAsync([FromRoute] Guid productId, CancellationToken cancellationToken = default)
     {
-        ActivateProductCommand command = new(id);
+        ActivateProductCommand command = new(productId);
         Result<ProductResponse> result = await _sender.Send(command, cancellationToken);
         if (result.IsFailure)
         {

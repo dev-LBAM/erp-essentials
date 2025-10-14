@@ -18,25 +18,25 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Controllers com camelCase para frontend
+// Controllers with camelCase JSON
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
     });
 
-// DB
+// Database
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// MediatR com ValidationBehavior
+// MediatR with ValidationBehavior
 builder.Services.AddMediatR(cfg =>
 {
     cfg.RegisterServicesFromAssembly(typeof(AssemblyReference).Assembly);
     cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 });
 
-// Repositories e Queries
+// Repositories and Queries
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IBrandRepository, BrandRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
@@ -52,18 +52,33 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 // FluentValidation
 builder.Services.AddValidatorsFromAssembly(typeof(AssemblyReference).Assembly);
 
-// OpenAPI
-builder.Services.AddOpenApi();
+// Swagger / OpenAPI
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new() { Title = "ERP Essentials API", Version = "v1" });
+
+    // Group endpoints by ApiExplorerSettings GroupName
+    c.TagActionsBy(api => new[] { api.GroupName ?? "Default" });
+    c.DocInclusionPredicate((_, api) => true);
+});
 
 var app = builder.Build();
 
-// Pipeline
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
-
+// HTTPS redirection
 app.UseHttpsRedirection();
 
+// Swagger UI (only in development)
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "ERP Essentials API v1");
+    });
+}
+
+// Map controllers
 app.MapControllers();
+
 app.Run();

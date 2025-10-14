@@ -2,7 +2,7 @@
 using ErpEssentials.SharedKernel.ResultPattern;
 using MediatR;
 
-namespace ErpEssentials.Application.Features.Products.Lots.RemoveStock;
+namespace ErpEssentials.Application.Features.Products.RemoveStock;
 
 public record RemoveProductStockCommand(
     Guid ProductId,

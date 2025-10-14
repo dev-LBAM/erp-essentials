@@ -15,10 +15,13 @@ public class GetBrandByIdEndpoint(ISender sender) : EndpointBaseAsync
 
     public readonly ISender _sender = sender;
 
-    [HttpGet("/api/brands/{id:guid}", Name = BrandRoutes.GetById)]
-    public override async Task<ActionResult<BrandResponse>> HandleAsync([FromRoute] Guid id, CancellationToken cancellationToken = default)
+    [HttpGet("/api/brands/{brandId:guid}", Name = BrandRoutes.GetById)]
+    [ApiExplorerSettings(GroupName = "Inventory / Brands")]
+    [ProducesResponseType(typeof(BrandResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Error), StatusCodes.Status404NotFound)]
+    public override async Task<ActionResult<BrandResponse>> HandleAsync([FromRoute] Guid brandId, CancellationToken cancellationToken = default)
     {
-        GetBrandByIdQuery query = new(id);
+        GetBrandByIdQuery query = new(brandId);
 
         Result<BrandResponse> result = await _sender.Send(query, cancellationToken);
 

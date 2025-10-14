@@ -1,24 +1,27 @@
 ﻿using Ardalis.ApiEndpoints;
 using ErpEssentials.Api.Common;
+using ErpEssentials.Api.Features.Products.Lots;
+using ErpEssentials.Application.Contracts.Products;
 using ErpEssentials.Application.Contracts.Products.Lots;
-using ErpEssentials.Application.Features.Products.Lots.ReceiveStock;
+using ErpEssentials.Application.Features.Products.ReceiveStock;
 using ErpEssentials.SharedKernel.ResultPattern;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ErpEssentials.Api.Features.Products.Lots.ReceiveStock;
+namespace ErpEssentials.Api.Features.Products.ReceiveStock;
 
 public class ReceiveProductStockEndpoint(ISender sender) : EndpointBase
 {
     private readonly ISender _sender = sender;
-    [HttpPost("/api/products/{id:guid}/receive-stock", Name = LotRoutes.ReceiveStock)]
+    [HttpPost("/api/products/{productId:guid}/receive-stock", Name = ProductRoutes.ReceiveStock)]
+    [ApiExplorerSettings(GroupName = "Inventory / Products")]
     [ProducesResponseType(typeof(LotResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationError), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(Error), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult> HandleAsync([FromRoute] Guid id, [FromBody] ReceiveProductStockRequest request, CancellationToken cancellationToken = default)
+    public async Task<ActionResult> HandleAsync([FromRoute] Guid productId, [FromBody] ReceiveProductStockRequest request, CancellationToken cancellationToken = default)
     {
         ReceiveProductStockCommand command = new(
-            id,
+            productId,
             request.Quantity,
             request.PurchasePrice,
             request.ExpirationDate);

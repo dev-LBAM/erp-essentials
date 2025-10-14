@@ -14,10 +14,13 @@ public class GetCategoryByIdEndpoint(ISender sender) : EndpointBaseAsync
 {
     private readonly ISender _sender = sender;
 
-    [HttpGet("/api/categories/{id:guid}", Name = CategoryRoutes.GetById)]
-    public override async Task<ActionResult<CategoryResponse>> HandleAsync([FromRoute]Guid id, CancellationToken cancellationToken = default)
+    [HttpGet("/api/categories/{categoryId:guid}", Name = CategoryRoutes.GetById)]
+    [ApiExplorerSettings(GroupName = "Inventory / Categories")]
+    [ProducesResponseType(typeof(CategoryResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Error), StatusCodes.Status404NotFound)]
+    public override async Task<ActionResult<CategoryResponse>> HandleAsync([FromRoute]Guid categoryId, CancellationToken cancellationToken = default)
     {
-        GetCategoryByIdQuery query = new(id);
+        GetCategoryByIdQuery query = new(categoryId);
 
         Result<CategoryResponse> result = await _sender.Send(query, cancellationToken);
 

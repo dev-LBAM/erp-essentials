@@ -1,4 +1,4 @@
-﻿using ErpEssentials.Application.Features.Products.Lots.RemoveStock;
+﻿using ErpEssentials.Application.Features.Products.RemoveStock;
 using ErpEssentials.Domain.Catalogs.Brands;
 using ErpEssentials.Domain.Catalogs.Categories;
 using ErpEssentials.Domain.Products;
@@ -6,7 +6,7 @@ using ErpEssentials.Domain.Products.Data;
 using ErpEssentials.SharedKernel.Abstractions;
 using Moq;
 
-namespace ErpEssentials.Application.Tests.Features.Products.Lots.ReceiveStock;
+namespace ErpEssentials.Application.Tests.Features.Products.RemoveStock;
 
 public class RemoveProductStockHandlerTests
 {

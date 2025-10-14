@@ -16,6 +16,7 @@ public class CreateBrandEndpoint(ISender sender) : EndpointBaseAsync
     private readonly ISender _sender = sender;
 
     [HttpPost("/api/brands", Name = BrandRoutes.Create)]
+    [ApiExplorerSettings(GroupName = "Inventory / Brands")]
     [ProducesResponseType(typeof(BrandResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ValidationError), StatusCodes.Status400BadRequest)]
     public override async Task<ActionResult<Brand>> HandleAsync([FromBody] CreateBrandRequest request, CancellationToken cancellationToken = default)
@@ -31,7 +32,7 @@ public class CreateBrandEndpoint(ISender sender) : EndpointBaseAsync
 
         return CreatedAtRoute(
             BrandRoutes.GetById,
-            new { id = result.Value.Id },
+            new { brandId = result.Value.Id },
             result.Value);
     }
 }

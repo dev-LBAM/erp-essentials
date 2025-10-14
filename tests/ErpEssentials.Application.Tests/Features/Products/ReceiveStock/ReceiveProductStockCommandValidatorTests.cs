@@ -1,8 +1,8 @@
-﻿using ErpEssentials.Application.Features.Products.Lots.ReceiveStock;
+﻿using ErpEssentials.Application.Features.Products.ReceiveStock;
 using ErpEssentials.Domain.Products.Lots;
 using FluentValidation.TestHelper;
 
-namespace ErpEssentials.Application.Tests.Features.Products.Lots.ReceiveStock;
+namespace ErpEssentials.Application.Tests.Features.Products.ReceiveStock;
 
 public class ReceiveProductStockCommandValidatorTests
 {

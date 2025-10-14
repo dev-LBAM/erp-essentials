@@ -11,14 +11,15 @@ namespace ErpEssentials.Api.Features.Products.Lots.AddQuantityToLot;
 public class AddQuantityToLotEndpoint(ISender sender) : EndpointBase
 {
     private readonly ISender _sender = sender;
-    [HttpPatch("/api/products/{id:guid}/lots/{lotId:guid}/add-quantity", Name = LotRoutes.AddQuantityToLot)]
+    [HttpPatch("/api/products/{productId:guid}/lots/{lotId:guid}/add-quantity", Name = LotRoutes.AddQuantityToLot)]
+    [ApiExplorerSettings(GroupName = "Inventory / Lots")]
     [ProducesResponseType(typeof(LotResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationError), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(Error), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult> HandleAsync([FromRoute] Guid id, [FromRoute] Guid lotId, [FromBody] AddQuantityToLotRequest request, CancellationToken cancellationToken = default)
+    public async Task<ActionResult> HandleAsync([FromRoute] Guid productId, [FromRoute] Guid lotId, [FromBody] AddQuantityToLotRequest request, CancellationToken cancellationToken = default)
     {
         AddQuantityToLotCommand command = new(
-            id,
+            productId,
             lotId,
             request.Quantity);
 

@@ -11,13 +11,14 @@ namespace ErpEssentials.Api.Features.Products.Deactivate;
 public class DeactivateProductEndpoint(ISender Sender) : EndpointBase
 {
     private readonly ISender _sender = Sender;
-    [HttpPatch("/api/products/{id:guid}/deactivate", Name = ProductRoutes.Deactivate)]
+    [HttpPatch("/api/products/{productId:guid}/deactivate", Name = ProductRoutes.Deactivate)]
+    [ApiExplorerSettings(GroupName = "Inventory / Products")]
     [ProducesResponseType(typeof(ProductResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationError), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(Error), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult> HandleAsync([FromRoute] Guid id, CancellationToken cancellationToken = default)
+    public async Task<ActionResult> HandleAsync([FromRoute] Guid productId, CancellationToken cancellationToken = default)
     {
-        DeactivateProductCommand command = new(id);
+        DeactivateProductCommand command = new(productId);
 
         Result<ProductResponse> result = await _sender.Send(command, cancellationToken);
         if (result.IsFailure)

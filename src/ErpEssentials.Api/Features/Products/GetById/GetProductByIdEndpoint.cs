@@ -15,10 +15,13 @@ public class GetProductByIdEndpoint(ISender sender) : EndpointBaseAsync
 
     private readonly ISender _sender = sender;
 
-    [HttpGet("/api/products/{id:guid}", Name = ProductRoutes.GetById)]
-    public override async Task<ActionResult<ProductResponse>> HandleAsync([FromRoute]Guid id, CancellationToken cancellationToken = default)
+    [HttpGet("/api/products/{productId:guid}", Name = ProductRoutes.GetById)]
+    [ApiExplorerSettings(GroupName = "Inventory / Products")]
+    [ProducesResponseType(typeof(ProductResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Error), StatusCodes.Status404NotFound)]
+    public override async Task<ActionResult<ProductResponse>> HandleAsync([FromRoute]Guid productId, CancellationToken cancellationToken = default)
     {
-        GetProductByIdQuery query = new(id);
+        GetProductByIdQuery query = new(productId);
 
         Result<ProductResponse> result = await _sender.Send(query, cancellationToken);
 

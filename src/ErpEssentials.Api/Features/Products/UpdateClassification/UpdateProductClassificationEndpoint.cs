@@ -11,14 +11,15 @@ namespace ErpEssentials.Api.Features.Products.UpdateClassification;
 public class UpdateProductClassificationEndpoint(ISender Sender) : EndpointBase
 {
     private readonly ISender _sender = Sender;
-    [HttpPatch("/api/products/{id:guid}/classification", Name = ProductRoutes.UpdateClassification)]
+    [HttpPatch("/api/products/{productId:guid}/classification", Name = ProductRoutes.UpdateClassification)]
+    [ApiExplorerSettings(GroupName = "Inventory / Products")]
     [ProducesResponseType(typeof(ProductResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationError), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(Error), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult> HandleAsync([FromRoute] Guid id, [FromBody] UpdateProductClassificationRequest request, CancellationToken cancellationToken = default)
+    public async Task<ActionResult> HandleAsync([FromRoute] Guid productId, [FromBody] UpdateProductClassificationRequest request, CancellationToken cancellationToken = default)
     {
         UpdateProductClassificationCommand command = new(
-            id, 
+            productId, 
             request.NewBrandId,
             request.NewCategoryId);
 

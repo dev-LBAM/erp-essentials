@@ -1,7 +1,7 @@
 ﻿using ErpEssentials.Domain.Products.Lots;
 using FluentValidation;
 
-namespace ErpEssentials.Application.Features.Products.Lots.RemoveStock;
+namespace ErpEssentials.Application.Features.Products.RemoveStock;
 
 public class RemoveProductStockCommandValidator : AbstractValidator<RemoveProductStockCommand>
 {

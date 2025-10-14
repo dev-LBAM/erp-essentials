@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ErpEssentials.Application.Features.Products.Lots.ReceiveStock;
+namespace ErpEssentials.Application.Features.Products.ReceiveStock;
 
 public class ReceiveProductStockCommandValidator : AbstractValidator<ReceiveProductStockCommand>
 {

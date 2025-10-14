@@ -1,8 +1,8 @@
-﻿using ErpEssentials.Application.Features.Products.Lots.RemoveStock;
+﻿using ErpEssentials.Application.Features.Products.RemoveStock;
 using ErpEssentials.Domain.Products.Lots;
 using FluentValidation.TestHelper;
 
-namespace ErpEssentials.Application.Tests.Features.Products.Lots.RemoveStock;
+namespace ErpEssentials.Application.Tests.Features.Products.RemoveStock;
 
 public class RemoveProductStockCommandValidatorTests
 {

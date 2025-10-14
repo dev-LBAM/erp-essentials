@@ -1,6 +1,6 @@
 ﻿using ErpEssentials.Application.Abstractions.Products.Lots;
 using ErpEssentials.Application.Contracts.Products.Lots;
-using ErpEssentials.Application.Features.Products.Lots.ReceiveStock;
+using ErpEssentials.Application.Features.Products.ReceiveStock;
 using ErpEssentials.Domain.Catalogs.Brands;
 using ErpEssentials.Domain.Catalogs.Categories;
 using ErpEssentials.Domain.Products;
@@ -10,7 +10,7 @@ using ErpEssentials.SharedKernel.Abstractions;
 using ErpEssentials.SharedKernel.ResultPattern;
 using Moq;
 
-namespace ErpEssentials.Application.Tests.Features.Products.Lots.ReceiveStock;
+namespace ErpEssentials.Application.Tests.Features.Products.ReceiveStock;
 
 public class ReceiveProductStockHandlerTests
 {

@@ -7,7 +7,7 @@ using ErpEssentials.SharedKernel.Abstractions;
 using ErpEssentials.SharedKernel.ResultPattern;
 using MediatR;
 
-namespace ErpEssentials.Application.Features.Products.Lots.ReceiveStock;
+namespace ErpEssentials.Application.Features.Products.ReceiveStock;
 
 public class ReceiveProductStockHandler(
     IProductRepository productRepository,

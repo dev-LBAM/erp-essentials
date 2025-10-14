@@ -15,6 +15,7 @@ public class CreateCategoryEndpoint(ISender sender) : EndpointBaseAsync
     private readonly ISender _sender = sender;
 
     [HttpPost("/api/categories", Name = CategoryRoutes.Create)]
+    [ApiExplorerSettings(GroupName = "Inventory / Categories")]
     [ProducesResponseType(typeof(CategoryResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ValidationError), StatusCodes.Status400BadRequest)]
     public override async Task<ActionResult<CategoryResponse>> HandleAsync([FromBody] CreateCategoryRequest request, CancellationToken cancellationToken = default)
@@ -30,7 +31,7 @@ public class CreateCategoryEndpoint(ISender sender) : EndpointBaseAsync
 
         return CreatedAtRoute(
             CategoryRoutes.GetById,
-            new { id = result.Value.Id },
+            new { categoryId = result.Value.Id },
             result.Value);
     }
 }

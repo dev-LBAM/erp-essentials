@@ -12,6 +12,7 @@ public class RemoveQuantityFromLotEndpoint(ISender sender) : EndpointBase
 {
     private readonly ISender _sender = sender;
     [HttpPatch("/api/products/{productId:guid}/lots/{lotId:guid}/remove-quantity", Name = LotRoutes.RemoveQuantityFromLot)]
+    [ApiExplorerSettings(GroupName = "Inventory / Lots")]
     [ProducesResponseType(typeof(LotResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationError), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(Error), StatusCodes.Status404NotFound)]

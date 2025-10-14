@@ -1,4 +1,4 @@
-﻿namespace ErpEssentials.Application.Contracts.Products.Lots;
+﻿namespace ErpEssentials.Application.Contracts.Products;
 
 public record ReceiveProductStockRequest(
     Guid ProductId,
