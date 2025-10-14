@@ -216,23 +216,23 @@ public class Product
     }
 
 
-    public Result AddQuantityToLot(Guid lotId, int quantityToAdd)
+    public Result<Lot> AddQuantityToLot(Guid lotId, int quantityToAdd)
     {
         if (quantityToAdd <= 0)
         {
-            return Result.Failure(ProductErrors.InvalidStockQuantity);
+            return Result<Lot>.Failure(ProductErrors.InvalidStockQuantity);
         }
 
         Lot? lot = _lots.FirstOrDefault(l => l.Id == lotId);
         if (lot is null)
         {
-            return Result.Failure(ProductErrors.LotNotFound);
+            return Result<Lot>.Failure(ProductErrors.LotNotFound);
         }
 
-        lot.AddQuantity(quantityToAdd);
+        Result<Lot> response = lot.AddQuantity(quantityToAdd);
         UpdatedAt = DateTime.UtcNow;
 
-        return Result.Success();
+        return response;
     }
 
     public Result RemoveFromSpecificLot(Guid lotId, int quantityToRemove)

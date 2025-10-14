@@ -37,20 +37,20 @@ public class Lot
         return Result<Lot>.Success(lot);
     }
 
-    internal Result AddQuantity(int amount)
+    internal Result<Lot> AddQuantity(int amount)
     {
-        if (amount <= 0) return Result.Failure(LotErrors.NonPositiveQuantity);
+        if (amount <= 0) return Result<Lot>.Failure(LotErrors.NonPositiveQuantity);
         Quantity += amount;
         UpdatedAt = DateTime.UtcNow;
-        return Result.Success();
+        return Result<Lot>.Success(this);
     }
 
-    internal Result RemoveQuantity(int amount)
+    internal Result<Lot> RemoveQuantity(int amount)
     {
-        if (amount <= 0) return Result.Failure(LotErrors.NonPositiveQuantity);
-        if (amount > Quantity) return Result.Failure(LotErrors.InsufficientStockInLot);
+        if (amount <= 0) return Result<Lot>.Failure(LotErrors.NonPositiveQuantity);
+        if (amount > Quantity) return Result<Lot>.Failure(LotErrors.InsufficientStockInLot);
         Quantity -= amount;
         UpdatedAt = DateTime.UtcNow;
-        return Result.Success();
+        return Result<Lot>.Success(this);
     }
 }
