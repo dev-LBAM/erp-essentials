@@ -11,5 +11,5 @@ public static class ProductRoutes
     public const string Activate = "Products.Activate";
     public const string ReceiveStock = "Products.ReceiveStock";
     public const string RemoveStock = "Products.RemoveStock";
-
+    public const string GetAllPaged = "Products.GetAllPaged";
 }
