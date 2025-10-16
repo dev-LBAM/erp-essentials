@@ -17,6 +17,7 @@ public static class ApiErrorHelper
             ErrorType.NotFound => controller.NotFound(error),
             ErrorType.Conflict => controller.Conflict(error),
             ErrorType.Validation => controller.BadRequest(error),
+            ErrorType.Unexpected => controller.StatusCode(StatusCodes.Status500InternalServerError, error),
             _ => controller.StatusCode(StatusCodes.Status500InternalServerError, error)
         };
     }

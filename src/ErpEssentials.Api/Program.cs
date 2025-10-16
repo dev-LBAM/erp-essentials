@@ -1,3 +1,4 @@
+using ErpEssentials.Api.Middlewares;
 using ErpEssentials.Application;
 using ErpEssentials.Application.Abstractions.Catalogs.Brands;
 using ErpEssentials.Application.Abstractions.Catalogs.Categories;
@@ -67,6 +68,9 @@ var app = builder.Build();
 
 // HTTPS redirection
 app.UseHttpsRedirection();
+
+// Global exception handling middleware
+app.UseMiddleware<UnexpectedExceptionMiddleware>();
 
 // Swagger UI (only in development)
 if (app.Environment.IsDevelopment())
