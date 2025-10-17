@@ -5,4 +5,4 @@ using MediatR;
 
 namespace ErpEssentials.Application.Features.Products.GetAllPaged;
 
-public record GetAllProductPagedQuery(int Page = 1, int PageSize = 10, string OrderBy = "Name", bool Ascending = true) : IRequest<Result<PagedResult<ProductResponse>>>;
+public record GetAllProductsPagedQuery(int Page = 1, int PageSize = 10, string OrderBy = "Name", bool Ascending = true) : IRequest<Result<PagedResult<ProductResponse>>>;

@@ -9,15 +9,15 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ErpEssentials.Api.Features.Products.GetAllPaged;
 
-public class GetAllProductPagedEndpoint(ISender sender) : EndpointBaseAsync
-    .WithRequest<GetAllProductPagedQuery>
+public class GetAllProductsPagedEndpoint(ISender sender) : EndpointBaseAsync
+    .WithRequest<GetAllProductsPagedQuery>
     .WithActionResult<PagedResult<ProductResponse>>
 {
     private readonly ISender _sender = sender;
     [HttpGet("/api/products", Name = ProductRoutes.GetAllPaged)]
     [ApiExplorerSettings(GroupName = "Inventory / Products")]
     [ProducesResponseType(typeof(PagedResult<ProductResponse>), StatusCodes.Status200OK)]
-    public override async Task<ActionResult<PagedResult<ProductResponse>>> HandleAsync([FromQuery] GetAllProductPagedQuery request, CancellationToken cancellationToken = default)
+    public override async Task<ActionResult<PagedResult<ProductResponse>>> HandleAsync([FromQuery] GetAllProductsPagedQuery request, CancellationToken cancellationToken = default)
     {
 
         Result<PagedResult<ProductResponse>> result = await _sender.Send(request, cancellationToken);

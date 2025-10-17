@@ -7,25 +7,25 @@ using Moq;
 
 namespace ErpEssentials.Application.Tests.Features.Products.GetAllPaged;
 
-public class GetAllProductPagedHandlerTests
+public class GetAllProductsPagedHandlerTests
 {
     private readonly IProductQueries _productQueries;
     private readonly Mock<IProductQueries> _mockProductQueries;
 
-    private readonly GetAllProductPageQueryHandler _handler;
+    private readonly GetAllProductsPagedQueryHandler _handler;
 
-    public GetAllProductPagedHandlerTests()
+    public GetAllProductsPagedHandlerTests()
     {
         _mockProductQueries = new Mock<IProductQueries>();
         _productQueries = _mockProductQueries.Object;
-        _handler = new GetAllProductPageQueryHandler(_productQueries);
+        _handler = new GetAllProductsPagedQueryHandler(_productQueries);
     }
 
     [Fact]
     public async Task Handle_Should_ReturnPagedProductResponse()
     {
         // Arrange
-        GetAllProductPagedQuery query = new();
+        GetAllProductsPagedQuery query = new();
 
         PagedResult<ProductResponse> fakePagedResult = new(
             [
