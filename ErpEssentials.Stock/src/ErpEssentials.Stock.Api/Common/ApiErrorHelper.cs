@@ -1,0 +1,24 @@
+﻿using ErpEssentials.Stock.SharedKernel.ResultPattern;
+using Microsoft.AspNetCore.Mvc;
+
+namespace ErpEssentials.Stock.Api.Common;
+
+public static class ApiErrorHelper
+{
+    public static ActionResult HandleFailure(this ControllerBase controller, Error error)
+    {
+        if (error is ValidationError validationError)
+        {
+            return controller.BadRequest(validationError);
+        }
+
+        return error.Type switch
+        {
+            ErrorType.NotFound => controller.NotFound(error),
+            ErrorType.Conflict => controller.Conflict(error),
+            ErrorType.Validation => controller.BadRequest(error),
+            ErrorType.Unexpected => controller.StatusCode(StatusCodes.Status500InternalServerError, error),
+            _ => controller.StatusCode(StatusCodes.Status500InternalServerError, error)
+        };
+    }
+}
